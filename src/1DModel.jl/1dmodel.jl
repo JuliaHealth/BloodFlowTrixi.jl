@@ -3,11 +3,11 @@
 
 Blood Flow equations in one space dimension. The equations are given by
 ```math
-\begin{aligned}
-  \frac{\partial A}{\partial t} + \frac{\partial}{\partial x}(Q) &= 0 \\
-    \frac{\partial Q}{\partial t} + \frac{\partial}{\partial x}\left(\frac{Q^2}{A} + A P(A)\right) &= P(A) \frac{\partial A}{\partial x} - 2 \pi \sqrt{\frac{A}{\pi}} k \frac Q A\\
-    P(A) &= P_{ext} + \frac{Eh}{1-\xi^2}\sqrt{\pi}\frac{\sqrt A - \sqrt{A_0}}{A_0} 
-\end{aligned}
+\left\{\begin{aligned}
+  \frac{\partial a}{\partial t} + \frac{\partial}{\partial x}(Q) &= 0 \\
+    \frac{\partial Q}{\partial t} + \frac{\partial}{\partial x}\left(\frac{Q^2}{a+A_0} + (a+A_0) P(a)\right) &= P(a) \frac{\partial}{\partial x}\left(a+A_0\right) - 2 \pi \sqrt{\frac{a+A_0}{\pi}} k \frac Q {a+A_0}\\
+    P(a) &= P_{ext} + \frac{Eh\sqrt{\pi}}{1-\xi^2}\frac{\sqrt{a+A_0} - \sqrt{A_0}}{A_0} 
+\end{aligned}\right.
 ```
 """
 struct BloodFlowEquations1D{T<:Real} <: AbstractBloodFlowEquations{1,4}
