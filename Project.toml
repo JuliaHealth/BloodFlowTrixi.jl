@@ -1,0 +1,7 @@
+name = "BloodFlowTrixi"
+uuid = "7b46d5ad-635f-4b66-9393-904f183e39b5"
+authors = ["yolhan83 <yolhan@laposte.net>"]
+version = "0.0.1"
+
+[compat]
+julia = "1.10"
