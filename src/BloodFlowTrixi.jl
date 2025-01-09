@@ -12,7 +12,11 @@ Docs under https://yolhan83.github.io/BloodFlowTrixi.jl
 $(isnothing(get(ENV, "CI", nothing)) ? ("\n" * "Package local path: " * pathof(BloodFlowTrixi)) : "") 
 """
 module BloodFlowTrixi
-
-# Write your package code here.
-
+    # dont forget to remove OrdinaryDiffEq after testing 
+    using Trixi
+    # Write your package code here.
+    abstract type AbstractBloodFlowEquations{NDIMS, NVARS} <:Trixi.AbstractEquations{NDIMS, NVARS} end
+    include("1DModel.jl/1dmodel.jl")
+    include("./1DModel.jl/Test_Cases/pressure_in.jl")
+    include("1DModel.jl/Test_Cases/convergence_test.jl")
 end
