@@ -198,6 +198,18 @@ function Trixi.max_abs_speed_naive(u_ll,u_rr,orientation::Integer,eq ::BloodFlow
 end
 
 @doc raw"""
+
+
+"""
+
+function Trixi.max_abs_speeds(u,eq::BloodFlowEquations1D)
+    a,Q,E,A0 = u 
+    A = a+A0
+    pp= pressure_der(u,eq)
+    return abs(Q/A) + sqrt(A*pp)
+end
+
+@doc raw"""
     pressure(u, eq::BloodFlowEquations1D)
 
 Computes the pressure given the state vector based on the compliance of the artery.
