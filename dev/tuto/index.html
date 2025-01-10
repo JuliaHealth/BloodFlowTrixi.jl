@@ -28,4 +28,42 @@ sol = solve(ode, SSPRK33(), dt=dt, dtmax=1e-4, dtmin=1e-11,
     A01 = sol[i][4:4:end]
     A1 = A01 .+ a1
     plot(Q1 ./ A1, lw=4, color=:red, ylim=(-10, 50), label=&quot;velocity&quot;, legend=:bottomleft)
-end</code></pre><p>This code generates an animated GIF showing the evolution of the velocity profile over time. The velocity is computed as <span>$Q/A$</span>, where <span>$Q$</span> is the flow rate, and <span>$A$</span> is the cross-sectional area.</p><p><img src="../graph.gif" alt="Alt Text"/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Friday 10 January 2025 12:34">Friday 10 January 2025</span>. Using Julia version 1.11.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><p>This code generates an animated GIF showing the evolution of the velocity profile over time. The velocity is computed as <span>$Q/A$</span>, where <span>$Q$</span> is the flow rate, and <span>$A$</span> is the cross-sectional area.</p><h2 id="Plain-code"><a class="docs-heading-anchor" href="#Plain-code">Plain code</a><a id="Plain-code-1"></a><a class="docs-heading-anchor-permalink" href="#Plain-code" title="Permalink"></a></h2><pre><code class="language-julia hljs">using Trixi
+using BloodFlowTrixi
+using OrdinaryDiffEq,Plots
+eq = BloodFlowEquations1D(;h=0.1)
+mesh = TreeMesh(0.0,40.0,initial_refinement_level=6,n_cells_max=10^4,periodicity=false)
+bc = (
+    x_neg = boundary_condition_pressure_in,
+    x_pos = Trixi.BoundaryConditionDoNothing()
+    )
+volume_flux = (flux_lax_friedrichs,flux_nonconservative)
+surface_flux = (flux_lax_friedrichs,flux_nonconservative)
+basis = LobattoLegendreBasis(2)
+id = IndicatorHennemannGassner(eq,basis;variable=first)
+vol = VolumeIntegralShockCapturingHG(id,volume_flux_dg=volume_flux,volume_flux_fv=surface_flux)
+solver = DGSEM(basis,surface_flux,vol)
+semi = SemidiscretizationHyperbolic(mesh,
+eq,
+initial_condition_simple,
+source_terms = source_term_simple,
+solver,
+boundary_conditions=bc)
+Trixi.default_analysis_integrals(::BloodFlowEquations1D) = ()
+tspan = (0.0, 0.5)
+ode = semidiscretize(semi, tspan)
+summary_callback = SummaryCallback()
+analysis_callback = AnalysisCallback(semi, interval = 200)
+stepsize_callback = StepsizeCallback(; cfl=0.5)
+callbacks = CallbackSet(summary_callback,analysis_callback,stepsize_callback)
+dt = stepsize_callback(ode)
+sol = solve(ode, SSPRK33(), dt = dt, dtmax = 1e-4,dtmin = 1e-11,
+            save_everystep = false,saveat = 0.002, callback = callbacks)
+
+@gif for i in eachindex(sol)
+    a1 = sol[i][1:4:end]
+    Q1 = sol[i][2:4:end]
+    A01 = sol[i][4:4:end]
+    A1 = A01.+a1
+    plot(Q1./A1,lw=4,color=:red,ylim=(-10,50),label=&quot;velocity&quot;,legend=:bottomleft)
+end</code></pre><p><img src="../graph.gif" alt="Alt Text"/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Friday 10 January 2025 12:39">Friday 10 January 2025</span>. Using Julia version 1.11.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
