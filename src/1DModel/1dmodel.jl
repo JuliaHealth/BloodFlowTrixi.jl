@@ -25,6 +25,11 @@ function BloodFlowEquations1D(;h,rho=1.0,xi=0.25,nu=0.04)
     return BloodFlowEquations1D(h,rho,xi,nu)
 end
 
+Trixi.have_nonconservative_terms(::BloodFlowEquations1D) = Trixi.True()
+Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations1D) = ("a","Q","E","A0")
+
+Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations1D) = ("a","Q","E","A0")
+
 @doc raw"""
     friction(u, x, eq::BloodFlowEquations1D)
 
