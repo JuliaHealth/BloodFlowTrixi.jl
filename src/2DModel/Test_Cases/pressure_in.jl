@@ -64,13 +64,13 @@ function boundary_condition_pressure_in(u_inner, normal,
             u_inner[5]
         )
         # calculate the boundary flux
-        if normal[2]<0 # u_inner is "left" of boundary, u_boundary is "right" of boundary
-            flux = surface_flux_function(u_inner, u_boundary, normal,
+        # if normal[2]>0 # u_inner is "left" of boundary, u_boundary is "right" of boundary
+            flux = normal[2]*surface_flux_function(u_inner, u_boundary, normal,
             eq)
-        else # u_boundary is "left" of boundary, u_inner is "right" of boundary
-            flux = surface_flux_function(u_boundary, u_inner, normal,
-        eq)
-        end
+        # else # u_boundary is "left" of boundary, u_inner is "right" of boundary
+            # flux = surface_flux_function(u_boundary, u_inner, normal,
+        # eq)
+        # end
     
         return flux
     end

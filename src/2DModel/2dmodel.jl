@@ -75,6 +75,7 @@ end
 function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations2D)
     P = pressure(u, eq) # Compute pressure from state vector
     a, QRθ, Qs, E, A0 = u 
+    QRθ = 0.0
     A = a + A0 # Total cross-sectional area
     if orientation == 1 # Flux in θ-direction
         f1 = QRθ / A
