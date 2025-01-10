@@ -106,7 +106,6 @@ eq::BloodFlowEquations2D)
 end
 
 function boundary_condition_pressure_in(u_inner, normal,
-    direction,
     x, t,
     surface_flux_function,
     eq::BloodFlowEquations2D)
