@@ -16,7 +16,7 @@ This initial condition is suitable for basic tests without complex dynamics.
 """
 function initial_condition_simple(x, t, eq::BloodFlowEquations2D; R0=2.0)
     T = eltype(x)
-    A0 = T(pi * R0^2)
+    A0 = T(R0^2/2)
     QRθ = T(0.0)
     Qs = T(0.0)
     E = T(1e7)
@@ -104,3 +104,31 @@ eq::BloodFlowEquations2D)
 
     return flux
 end
+
+function boundary_condition_pressure_in(u_inner, normal,
+    direction,
+    x, t,
+    surface_flux_function,
+    eq::BloodFlowEquations2D)
+        Pin = ifelse(t < 0.125, 2e4 * sinpi(t / 0.125)^2, 0.0)
+        Ain = inv_pressure(Pin, u_inner, eq)
+        A0in = u_inner[5]
+        ain = Ain - A0in
+        u_boundary =  SVector(
+            ain,
+            u_inner[2],
+            u_inner[3],
+            u_inner[4],
+            u_inner[5]
+        )
+        # calculate the boundary flux
+        if iseven(direction) # u_inner is "left" of boundary, u_boundary is "right" of boundary
+            flux = surface_flux_function(u_inner, u_boundary, orientation_or_normal,
+            eq)
+        else # u_boundary is "left" of boundary, u_inner is "right" of boundary
+            flux = surface_flux_function(u_boundary, u_inner, orientation_or_normal,
+        eq)
+        end
+    
+        return flux
+    end
