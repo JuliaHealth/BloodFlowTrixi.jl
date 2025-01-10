@@ -143,7 +143,7 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, orientation::Integer, eq::BloodFl
     pp_ll = pressure_der(u_ll, eq)
     pp_rr = pressure_der(u_rr, eq)
     if orientation == 1
-        return max(max(abs(QRθ_ll)/A_ll, abs(QRθ_rr)/A_rr), max(sqrt(pp_ll), sqrt(pp_rr)))
+        return max(max(abs(QRθ_ll)/A_ll^2, abs(QRθ_rr)/A_rr^2), max(sqrt(pp_ll), sqrt(pp_rr)))
     else
         ws_ll = Qs_ll / A_ll
         ws_rr = Qs_rr / A_rr
@@ -171,7 +171,7 @@ function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
     a,QRθ,Qs,E,A0 = u 
     A = a+A0
     pp= pressure_der(u,eq)
-    return sqrt(pp),abs(Qs/A) + sqrt(A*pp)
+    return max(abs(QRθ/A^2),sqrt(pp)),abs(Qs/A) + sqrt(A*pp)
 end
 
 
