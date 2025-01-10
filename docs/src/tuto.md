@@ -206,4 +206,47 @@ end
 ```
 This code generates an animated GIF showing the evolution of the velocity profile over time. The velocity is computed as $Q/A$, where $Q$ is the flow rate, and $A$ is the cross-sectional area.
 
+## Plain code
+```julia
+using Trixi
+using BloodFlowTrixi
+using OrdinaryDiffEq,Plots
+eq = BloodFlowEquations1D(;h=0.1)
+mesh = TreeMesh(0.0,40.0,initial_refinement_level=6,n_cells_max=10^4,periodicity=false)
+bc = (
+    x_neg = boundary_condition_pressure_in,
+    x_pos = Trixi.BoundaryConditionDoNothing()
+    )
+volume_flux = (flux_lax_friedrichs,flux_nonconservative)
+surface_flux = (flux_lax_friedrichs,flux_nonconservative)
+basis = LobattoLegendreBasis(2)
+id = IndicatorHennemannGassner(eq,basis;variable=first)
+vol = VolumeIntegralShockCapturingHG(id,volume_flux_dg=volume_flux,volume_flux_fv=surface_flux)
+solver = DGSEM(basis,surface_flux,vol)
+semi = SemidiscretizationHyperbolic(mesh,
+eq,
+initial_condition_simple,
+source_terms = source_term_simple,
+solver,
+boundary_conditions=bc)
+Trixi.default_analysis_integrals(::BloodFlowEquations1D) = ()
+tspan = (0.0, 0.5)
+ode = semidiscretize(semi, tspan)
+summary_callback = SummaryCallback()
+analysis_callback = AnalysisCallback(semi, interval = 200)
+stepsize_callback = StepsizeCallback(; cfl=0.5)
+callbacks = CallbackSet(summary_callback,analysis_callback,stepsize_callback)
+dt = stepsize_callback(ode)
+sol = solve(ode, SSPRK33(), dt = dt, dtmax = 1e-4,dtmin = 1e-11,
+            save_everystep = false,saveat = 0.002, callback = callbacks)
+
+@gif for i in eachindex(sol)
+    a1 = sol[i][1:4:end]
+    Q1 = sol[i][2:4:end]
+    A01 = sol[i][4:4:end]
+    A1 = A01.+a1
+    plot(Q1./A1,lw=4,color=:red,ylim=(-10,50),label="velocity",legend=:bottomleft)
+end
+```
+
 ![Alt Text](./graph.gif)
