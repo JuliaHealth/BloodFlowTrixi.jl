@@ -19,7 +19,7 @@ This package provides:
 - **2D Blood Flow Model**: The 2D model extends the Navier-Stokes equations under the thin-artery assumption, allowing for simulations in complex arterial geometries using curvilinear coordinates. It captures both longitudinal and angular dynamics, making it more accurate than classical 1D models while being less computationally expensive than full 3D models.
 
   This model is described in detail in:  
-  **[[Article 2D](https://hal.science/hal-04676130v1)]**
+  **[[Article 2D](https://hal.science/hal-04700161v1)]**
 
 Both models were designed to be used with **[Trixi.jl](https://github.com/trixi-framework/Trixi.jl)**, a flexible and high-performance framework for solving systems of conservation laws using the Discontinuous Galerkin (DG) method.
 
