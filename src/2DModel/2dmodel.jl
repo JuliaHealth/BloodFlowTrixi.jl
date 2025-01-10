@@ -17,7 +17,20 @@ The governing equations account for conservation of mass and momentum, incorpora
     \frac{1}{A} \partial_t Q_s + \frac{1}{A} \partial_\theta \left(\frac{Q_s Q_{R\theta}}{A^2}\right) + \frac{1}{A} \partial_s \left(\frac{Q_s^2}{A} - \frac{Q_{R\theta}^2}{2A^2} + AP\right) &= -\frac{2R}{3} C \sin \theta \frac{Q_s Q_{R\theta}}{A^2} + kR \frac{Q_s}{A} + \frac{1}{A} \partial_s AP, \\
     P &= P_{ext} + b \frac{R - R_0}{R_0},
 \end{aligned}\right.
+
+```math
+\left\{\begin{aligned}
+    \frac{\partial a}{\partial t} + \frac{\partial}{\partial \theta}\left( \frac{Q_{R\theta}A} \right) + \frac{\partial}{\partial_s}(Q_s) &= 0 \\
+    \frac{\partial Q_{R\theta}}{\partial t} + \frac{\partial}{\partial \theta}\left(\frac{Q_{R\theta}^2}{2A^2} + A P(a)\right) + \frac{\partial}{\partial_s}\left( \frac{Q_{R\theta}Q_s}{A} \right) &= P(a) \frac{\partial A}{\partial \theta} - 2 R k \frac{Q_{R\theta}}{A} + \frac{2R}3 \mathcal{C}\sin \theta \frac{Q_s^2}A\\
+    \frac{\partial Q_{s}}{\partial t} + \frac{\partial}{\partial \theta}\left(\frac{Q_{R\theta} Q_s}{A^2} \right) + \frac{\partial}{\partial_s}\left( \frac{Q_s^2}{A} - \frac{Q_{R\theta}^2}{2A^2} + A P(a) \right) &= P(a) \frac{\partial A}{\partial s} - R k \frac{Q_s}{A} - \frac{2R}3 \mathcal{C}\sin \theta \frac{Q_s Q_{R\theta}}{A^2}\\
+    P(a) &= P_{ext} + \frac{Eh}{\sqrt{2}\left(1-\xi^2\right)}\frac{\sqrt{A} - \sqrt{A_0}}{A_0} \\
+  R &= \sqrt{2A}
+\end{aligned}\right.
 ```
+
+```
+
+
 """
 struct BloodFlowEquations2D{T<:Real} <: AbstractBloodFlowEquations{2,5}
     h ::T      # Wall thickness
