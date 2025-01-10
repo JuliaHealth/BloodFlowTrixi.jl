@@ -12,9 +12,3 @@ Documentation for [BloodFlowTrixi](https://github.com/yolhan83/BloodFlowTrixi.jl
 ```@autodocs
 Modules = [BloodFlowTrixi]
 ```
-
-## Tutorial
-
-```@contents
-Pages = ["tuto.md"]
-```
