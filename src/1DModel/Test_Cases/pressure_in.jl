@@ -47,7 +47,7 @@ function source_term_simple(u, x, t, eq::BloodFlowEquations1D)
     s1 = zero(T)
     k = friction(u, x, eq)
     R = radius(u, eq)
-    s2 = T(2 * pi * k / R * Q / A)
+    s2 = T(2 * pi * k * R * Q / A)
     return SVector(s1, s2, 0, 0)
 end
 
