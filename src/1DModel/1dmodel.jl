@@ -1,5 +1,5 @@
 @doc raw"""
-    BloodFlowEquations1D(;h,rho=1.0,xi=0.25)
+    BloodFlowEquations1D(;h,rho=1.0,xi=0.25,nu=0.04)
 
 Blood Flow equations in one space dimension. This model describes the dynamics of blood flow along a compliant artery using one-dimensional equations derived from the Navier-Stokes equations. The equations account for conservation of mass and momentum, incorporating the effect of arterial compliance and frictional losses.
 
@@ -19,6 +19,10 @@ struct BloodFlowEquations1D{T<:Real} <: AbstractBloodFlowEquations{1,4}
     rho::T     # Fluid density
     xi::T      # Poisson's ratio
     nu::T      # Viscosity coefficient
+end
+
+function BloodFlowEquations1D(;h,rho=1.0,xi=0.25,nu=0.04)
+    return BloodFlowEquations1D(h,rho,xi,nu)
 end
 
 @doc raw"""
