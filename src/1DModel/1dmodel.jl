@@ -198,8 +198,7 @@ function Trixi.max_abs_speed_naive(u_ll,u_rr,orientation::Integer,eq ::BloodFlow
 end
 
 @doc raw"""
-
-
+TODO
 """
 
 function Trixi.max_abs_speeds(u,eq::BloodFlowEquations1D)
