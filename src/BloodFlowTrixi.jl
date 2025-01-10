@@ -20,4 +20,6 @@ module BloodFlowTrixi
     include("./1DModel/Test_Cases/pressure_in.jl")
     include("1DModel/Test_Cases/convergence_test.jl")
     include("2DModel/2dmodel.jl")
+    include("2DModel/Test_Cases/pressure_in.jl")
+    include("2DModel/Test_Cases/convergence_test.jl")
 end
