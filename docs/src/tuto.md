@@ -23,7 +23,7 @@ We begin by defining a one-dimensional Tree mesh, which discretizes the spatial 
 ```julia
 mesh = TreeMesh(0.0, 40.0, initial_refinement_level=6, n_cells_max=10^4, periodicity=false)
 ```
-This generates a non-periodic mesh for the interval $[0, 40]$, with $2^{\text{initial\_refinement\_level}+1}-1$ cells. The parameter `initial_refinement_level` controls the initial number of cells, while `n_cells_max` specifies the maximum number of cells allowed during mesh refinement.
+This generates a non-periodic mesh for the interval $[0, 40]$, with $2^{\text{initial_refinement_level}+1}-1$ cells. The parameter `initial_refinement_level` controls the initial number of cells, while `n_cells_max` specifies the maximum number of cells allowed during mesh refinement.
 
 In **Trixi.jl**, the Tree mesh has two labeled boundaries: ***x_neg*** (left boundary) and ***x_pos*** (right boundary). These labels are used to apply boundary conditions:
 ```julia
