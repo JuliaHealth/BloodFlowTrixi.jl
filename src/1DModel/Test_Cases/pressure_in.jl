@@ -86,7 +86,7 @@ eq::BloodFlowEquations1D)
     ain = Ain - A0in
     u_boundary =  SVector(
         ain,
-        -u_inner[2],
+        u_inner[2],
         u_inner[3],
         u_inner[4]
     )
