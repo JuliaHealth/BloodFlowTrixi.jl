@@ -12,9 +12,9 @@ Defines the two-dimensional blood flow equations derived from the Navier-Stokes 
 The governing equations account for conservation of mass and momentum, incorporating the effects of arterial compliance, curvature, and frictional losses.
 ```math
 \left\{\begin{aligned}
-    \frac{\partial A}{\partial t} + \frac{\partial_\theta(Q_{R\theta})}{A} + \frac{\partial_s(Q_s)} &= 0, \\
-    \frac{\partial_t(Q_{R\theta})}{A} + \frac{\partial_\theta}{A} \left(\frac{Q_{R\theta}^2}{A^2} + AP\right) + \frac{\partial_s \left(Q_{R\theta}Q_s\right)}{A} &= \frac{2R}{3}C \sin \theta \frac{Q_s^2}{A} + 2Rk \frac{Q_{R\theta}}{A} + \partial_\theta AP, \\
-    \frac{\partial_t(Q_s)}{A} + \frac{\partial_\theta}{A} \left(\frac{Q_s Q_{R\theta}}{A^2}\right) + \frac{\partial_s}{A} \left(\frac{Q_s^2}{A} - \frac{Q_{R\theta}^2}{2A^2} + AP\right) &= -\frac{2R}{3}C \sin \theta \frac{Q_s Q_{R\theta}}{A^2} + kR \frac{Q_s}{A} + \partial_s AP, \\
+    \frac{\partial A}{\partial t} + \frac{1}{A} \partial_\theta Q_{R\theta} + \partial_s Q_s &= 0, \\
+    \frac{1}{A} \partial_t Q_{R\theta} + \frac{1}{A} \partial_\theta \left(\frac{Q_{R\theta}^2}{A^2} + AP\right) + \frac{1}{A} \partial_s \left(Q_{R\theta} Q_s\right) &= \frac{2R}{3} C \sin \theta \frac{Q_s^2}{A} + 2Rk \frac{Q_{R\theta}}{A} + \frac{1}{A} \partial_\theta AP, \\
+    \frac{1}{A} \partial_t Q_s + \frac{1}{A} \partial_\theta \left(\frac{Q_s Q_{R\theta}}{A^2}\right) + \frac{1}{A} \partial_s \left(\frac{Q_s^2}{A} - \frac{Q_{R\theta}^2}{2A^2} + AP\right) &= -\frac{2R}{3} C \sin \theta \frac{Q_s Q_{R\theta}}{A^2} + kR \frac{Q_s}{A} + \frac{1}{A} \partial_s AP, \\
     P &= P_{ext} + b \frac{R - R_0}{R_0},
 \end{aligned}\right.
 ```
