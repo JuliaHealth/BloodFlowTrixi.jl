@@ -12,7 +12,7 @@ Docs under https://yolhan83.github.io/BloodFlowTrixi.jl
 $(isnothing(get(ENV, "CI", nothing)) ? ("\n" * "Package local path: " * pathof(BloodFlowTrixi)) : "") 
 """
 module BloodFlowTrixi
-    # dont forget to remove OrdinaryDiffEq after testing 
+    export flux_nonconservative,BloodFlowEquations1D,BloodFlowEquations2D,boundary_condition_outflow,boundary_condition_pressure_in,initial_condition_simple,source_term_simple
     using Trixi
     # Write your package code here.
     abstract type AbstractBloodFlowEquations{NDIMS, NVARS} <:Trixi.AbstractEquations{NDIMS, NVARS} end
@@ -20,4 +20,6 @@ module BloodFlowTrixi
     include("./1DModel/Test_Cases/pressure_in.jl")
     include("1DModel/Test_Cases/convergence_test.jl")
     include("2DModel/2dmodel.jl")
+
+
 end

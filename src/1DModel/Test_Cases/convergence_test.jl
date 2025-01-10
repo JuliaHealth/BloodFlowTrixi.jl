@@ -20,7 +20,7 @@ The returned initial condition has:
 
 This initial condition can be used to verify the accuracy and stability of numerical solvers.
 """
-function initial_condition_convergence_test(x, t, eq::BloodFlowEquations1D)
+function Trixi.initial_condition_convergence_test(x, t, eq::BloodFlowEquations1D)
     T = eltype(x)
     R0 = T(1.0)
     A0 = T(pi) * R0^2
@@ -52,7 +52,7 @@ The radius `R` is computed using the `radius` function, and the friction coeffic
 
 This function is useful for evaluating the correctness of source term handling in numerical solvers.
 """
-function source_terms_convergence_test(u, x, t, eq::BloodFlowEquations1D)
+function Trixi.source_terms_convergence_test(u, x, t, eq::BloodFlowEquations1D)
     T = eltype(u)
     A0 = u[4]
     s1 = pi * t * cospi(x[1] * t) |> T
