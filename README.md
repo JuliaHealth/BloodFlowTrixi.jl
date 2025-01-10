@@ -41,11 +41,6 @@ pkg> add Trixi
 pkg> add https://github.com/your-repo/BloodFlowTrixi.jl
 ```
 
-## References
-
-1. **1D Model**: [Article 1D: link to the publication]
-2. **2D Model**: [Article 2D: link to the publication]
-
 ## License
 
 This package is licensed under [Your License].
