@@ -29,6 +29,10 @@ struct BloodFlowEquations2D{T<:Real} <: AbstractBloodFlowEquations{2,5}
     nu::T      # Viscosity coefficient
 end
 
+function BloodFlowEquations2D(;h,rho=1.0,xi=0.25,nu=0.04)
+    return BloodFlowEquations2D(h,rho,xi,nu)
+end
+
 Trixi.have_nonconservative_terms(::BloodFlowEquations2D) = Trixi.True()
 Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations2D) = ("a","QRθ","Qs","E","A0")
 
