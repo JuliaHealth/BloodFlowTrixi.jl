@@ -164,7 +164,7 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
         ws_rr = Qs_rr / A_rr
         sp2 =  max(abs(ws_ll), abs(ws_rr)) + max(sqrt(A_ll * pp_ll), sqrt(A_rr * pp_rr))
     # end
-    return sp1.*normal[1] .* sp2.*normal[2]
+    return sp1.*normal[1] .+ sp2.*normal[2]
 end
 
 function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
