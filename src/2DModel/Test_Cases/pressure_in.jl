@@ -84,13 +84,14 @@ surface_flux_function,
 eq::BloodFlowEquations2D)
     Pin = ifelse(t < 0.125, 2e4 * sinpi(t / 0.125)^2, 0.0)
     Ain = inv_pressure(Pin, u_inner, eq)
-    A0in = u_inner[4]
+    A0in = u_inner[5]
     ain = Ain - A0in
     u_boundary =  SVector(
         ain,
         u_inner[2],
         u_inner[3],
-        u_inner[4]
+        u_inner[4],
+        u_inner[5]
     )
     # calculate the boundary flux
     if iseven(direction) # u_inner is "left" of boundary, u_boundary is "right" of boundary

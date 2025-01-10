@@ -204,7 +204,7 @@ function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
     a,QRθ,Qs,E,A0 = u 
     A = a+A0
     pp= pressure_der(u,eq)
-    return abs(Qs/A) + sqrt(A*pp),sqrt(pp)
+    return sqrt(pp),abs(Qs/A) + sqrt(A*pp)
 end
 
 @doc raw"""
@@ -221,9 +221,9 @@ Pressure as a scalar.
 """
 function pressure(u, eq::BloodFlowEquations2D)
     T = eltype(u)
-    A = u[1] + u[4]
-    E = u[3]
-    A0 = u[4]
+    A = u[1] + u[5]
+    E = u[4]
+    A0 = u[5]
     xi = eq.xi
     h = eq.h
     b = (E * h / sqrt(2)) / (1 - xi^2) # Precompute constant b
@@ -243,7 +243,7 @@ Computes the radius of the artery based on the cross-sectional area.
 Radius as a scalar.
 """
 function radius(u, eq::BloodFlowEquations2D)
-    return sqrt((u[1] + u[4]) / pi) # Compute radius from cross-sectional area
+    return sqrt((u[1] + u[5]) / pi) # Compute radius from cross-sectional area
 end
 
 @doc raw"""
@@ -261,8 +261,8 @@ Cross-sectional area corresponding to the given pressure.
 """
 function inv_pressure(p, u, eq::BloodFlowEquations2D)
     T = eltype(u)
-    E = u[3]
-    A0 = u[4]
+    E = u[4]
+    A0 = u[5]
     xi = eq.xi
     h = eq.h
     b = (E * h / sqrt(2)) / (1 - xi^2) # Precompute constant b
@@ -283,9 +283,9 @@ Derivative of pressure.
 """
 function pressure_der(u, eq::BloodFlowEquations2D)
     T = eltype(u)
-    A = u[1] + u[4]
-    E = u[3]
-    A0 = u[4]
+    A = u[1] + u[5]
+    E = u[4]
+    A0 = u[5]
     xi = eq.xi
     h = eq.h
     return T((E * h / sqrt(2)) / (1 - xi^2) * 0.5 / (sqrt(A) * A0))
