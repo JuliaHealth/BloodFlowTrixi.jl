@@ -15,11 +15,28 @@ This package provides:
   
   More details about this model can be found in my corresponding publication:  
   **[[Article 1D](https://hal.science/hal-04676130v1)]**
+```math
+\left\{\begin{aligned}
+  \frac{\partial a}{\partial t} + \frac{\partial}{\partial x}(Q) &= 0 \\
+  \frac{\partial Q}{\partial t} + \frac{\partial}{\partial x}\left(\frac{Q^2}{A} + A P(a)\right) &= P(a) \frac{\partial A}{\partial x} - 2 \pi R k \frac Q {A}\\
+  P(a) &= P_{ext} + \frac{Eh\sqrt{\pi}}{1-\xi^2}\frac{\sqrt{A} - \sqrt{A_0}}{A_0} \\
+  R &= \sqrt{\frac{A}{\pi}}
+\end{aligned}\right.
+```
 
 - **2D Blood Flow Model**: The 2D model extends the Navier-Stokes equations under the thin-artery assumption, allowing for simulations in complex arterial geometries using curvilinear coordinates. It captures both longitudinal and angular dynamics, making it more accurate than classical 1D models while being less computationally expensive than full 3D models.
 
   This model is described in detail in:  
   **[[Article 2D](https://hal.science/hal-04700161v1)]**
+```math
+\left\{\begin{aligned}
+    \frac{\partial a}{\partial t} + \frac{\partial}{\partial \theta}\left( \frac{Q_{R\theta}}{A} \right) + \frac{\partial}{\partial s}(Q_s) &= 0 \\
+    \frac{\partial Q_{R\theta}}{\partial t} + \frac{\partial}{\partial \theta}\left(\frac{Q_{R\theta}^2}{2A^2} + A P(a)\right) + \frac{\partial}{\partial s}\left( \frac{Q_{R\theta}Q_s}{A} \right) &= P(a) \frac{\partial A}{\partial \theta} - 2 R k \frac{Q_{R\theta}}{A} + \frac{2R}{3} \mathcal{C}\sin \theta \frac{Q_s^2}{A} \\
+    \frac{\partial Q_{s}}{\partial t} + \frac{\partial}{\partial \theta}\left(\frac{Q_{R\theta} Q_s}{A^2} \right) + \frac{\partial}{\partial s}\left( \frac{Q_s^2}{A} - \frac{Q_{R\theta}^2}{2A^2} + A P(a) \right) &= P(a) \frac{\partial A}{\partial s} - R k \frac{Q_s}{A} - \frac{2R}{3} \mathcal{C}\sin \theta \frac{Q_s Q_{R\theta}}{A^2} \\
+    P(a) &= P_{ext} + \frac{Eh}{\sqrt{2}\left(1-\xi^2\right)}\frac{\sqrt{A} - \sqrt{A_0}}{A_0} \\
+    R &= \sqrt{2A}
+\end{aligned}\right.
+```
 
 Both models were designed to be used with **[Trixi.jl](https://github.com/trixi-framework/Trixi.jl)**, a flexible and high-performance framework for solving systems of conservation laws using the Discontinuous Galerkin (DG) method.
 
