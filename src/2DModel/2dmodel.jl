@@ -166,11 +166,15 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     pp_ll = pressure_der(u_ll, eq)
     pp_rr = pressure_der(u_rr, eq)
     # if orientation == 1
-        sp1 =  max(max(abs(QRθ_ll)/A_ll^2, abs(QRθ_rr)/A_rr^2), max(sqrt(pp_ll), sqrt(pp_rr)))
+        sp1 =  max(
+            max(abs(QRθ_ll)/A_ll^2, abs(QRθ_rr)/A_rr^2), 
+            max(sqrt(pp_ll), sqrt(pp_rr))
+            )
     # else
         ws_ll = Qs_ll / A_ll
         ws_rr = Qs_rr / A_rr
-        sp2 =  max(abs(ws_ll), abs(ws_rr)) + max(sqrt(A_ll * pp_ll), sqrt(A_rr * pp_rr))
+        sp2 =  max(abs(ws_ll), abs(ws_rr)) + 
+                max(sqrt(A_ll * pp_ll), sqrt(A_rr * pp_rr))
     # end
     return sp1.*normal[1] .+ sp2.*normal[2]
 end
@@ -188,10 +192,12 @@ function pressure(u, eq::BloodFlowEquations2D)
     A = u[1] + u[5]
     E = u[4]
     A0 = u[5]
+    R = radius(u,eq)
+    R0 = sqrt(2*A0)
     xi = eq.xi
     h = eq.h
-    b = (E * h / sqrt(2)) / (1 - xi^2) # Precompute constant b
-    return T(b * (sqrt(A) - sqrt(A0)) / A0)
+    b = E * h / (1 - xi^2) # Precompute constant b
+    return T(b * (R - R0) / R0^2)
 end
 
 
@@ -204,10 +210,11 @@ function inv_pressure(p, u, eq::BloodFlowEquations2D)
     T = eltype(u)
     E = u[4]
     A0 = u[5]
+    R0 = sqrt(2*A0)
     xi = eq.xi
     h = eq.h
-    b = (E * h / sqrt(2)) / (1 - xi^2) # Precompute constant b
-    return T((A0 * p / b + sqrt(A0))^2)
+    b = E * h / (1 - xi^2) # Precompute constant b
+    return T((R0^2 * p / b + R0)^2/2)
 end
 
 function pressure_der(u, eq::BloodFlowEquations2D)
@@ -223,7 +230,7 @@ end
 
 function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations2D)
     λ = dissipation.max_abs_speed(u_ll, u_rr, orientation_or_normal_direction, eq)
-    diss = -0.5f0 .* λ .* (u_rr .- u_ll) # Compute dissipation term
+    diss = -0.5 .* λ .* (u_rr .- u_ll) # Compute dissipation term
     return SVector(diss[1], diss[2], diss[3], 0, 0)
 end
 
