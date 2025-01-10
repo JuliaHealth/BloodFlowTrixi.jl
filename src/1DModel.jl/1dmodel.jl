@@ -5,8 +5,9 @@ Blood Flow equations in one space dimension. The equations are given by
 ```math
 \left\{\begin{aligned}
   \frac{\partial a}{\partial t} + \frac{\partial}{\partial x}(Q) &= 0 \\
-    \frac{\partial Q}{\partial t} + \frac{\partial}{\partial x}\left(\frac{Q^2}{a+A_0} + (a+A_0) P(a)\right) &= P(a) \frac{\partial}{\partial x}\left(a+A_0\right) - 2 \pi \sqrt{\frac{a+A_0}{\pi}} k \frac Q {a+A_0}\\
-    P(a) &= P_{ext} + \frac{Eh\sqrt{\pi}}{1-\xi^2}\frac{\sqrt{a+A_0} - \sqrt{A_0}}{A_0} 
+    \frac{\partial Q}{\partial t} + \frac{\partial}{\partial x}\left(\frac{Q^2}{A} + A P(a)\right) &= P(a) \frac{\partial}{\partial x}\left(A\right) - 2 \pi R k \frac Q {A}\\
+    P(a) &= P_{ext} + \frac{Eh\sqrt{\pi}}{1-\xi^2}\frac{\sqrt{A} - \sqrt{A_0}}{A_0} \\
+    R &= \sqrt{\frac{A}{\pi}}
 \end{aligned}\right.
 ```
 """
