@@ -204,7 +204,7 @@ function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
     a,QRθ,Qs,E,A0 = u 
     A = a+A0
     pp= pressure_der(u,eq)
-    return max(abs(Qs/A) + sqrt(A*pp),sqrt(pp))
+    return abs(Qs/A) + sqrt(A*pp),sqrt(pp)
 end
 
 @doc raw"""
