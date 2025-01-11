@@ -59,6 +59,7 @@ pkg> add https://github.com/your-repo/BloodFlowTrixi.jl
 ## Future Plans
 
 **short term**
+- Add second order 1D model.
 - Design prim variables for 1D and 2D models.
 - Add proper tests for 1D and 2D models.
 - Add 3D representations of the solutions for 1D and 2D models.
