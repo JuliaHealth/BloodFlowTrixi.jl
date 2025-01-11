@@ -64,6 +64,7 @@ pkg> add https://github.com/your-repo/BloodFlowTrixi.jl
 
 **short term**
 - Design prim variables for 1D and 2D models.
+- Add proper tests for 1D and 2D models.
 - Add 3D representations of the solutions for 1D and 2D models.
 - Design easy to use interfaces for users to define their own initial and boundary conditions and source terms.
 
