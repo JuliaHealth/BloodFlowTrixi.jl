@@ -472,4 +472,54 @@ end
 ```
 This code generates an animated GIF showing the evolution of the velocity profile over time. The velocity is computed as $Q/A$, where $Q$ is the flow rate, and $A$ is the cross-sectional area.
 
+## Plain code
+```julia
+using Trixi
+using BloodFlowTrixi
+using OrdinaryDiffEq,Plots
+eq = BloodFlowEquations2D(;h=0.1)
+mesh = P4estMesh(
+    (2,4),
+    polydeg= 2,
+    coordinates_min =(0.0,0.0),
+    coordinates_max = (2*pi,40.0),
+    initial_refinement_level = 4,
+    periodicity = (false, false)
+)
+bc = Dict(
+    :x_neg =>Trixi.BoundaryConditionDoNothing(),
+    :x_pos =>Trixi.BoundaryConditionDoNothing(),
+    :y_neg =>boundary_condition_pressure_in,
+    :y_pos => Trixi.BoundaryConditionDoNothing()
+    )
+volume_flux = (flux_lax_friedrichs,flux_nonconservative)
+surface_flux = (flux_lax_friedrichs,flux_nonconservative)
+basis = LobattoLegendreBasis(2)
+id = IndicatorHennemannGassner(eq,basis;variable=first)
+vol =VolumeIntegralShockCapturingHG(id,volume_flux_dg = surface_flux,volume_flux_fv = volume_flux) 
+solver = DGSEM(basis,surface_flux,vol)
+semi = SemidiscretizationHyperbolic(mesh,
+eq,
+initial_condition_simple,
+source_terms = source_term_simple,
+solver,
+boundary_conditions = bc)
+Trixi.default_analysis_integrals(::BloodFlowEquations2D) = ()
+tspan = (0.0, 0.3)
+ode = semidiscretize(semi, tspan)
+summary_callback = SummaryCallback()
+analysis_callback = AliveCallback(analysis_interval=1000)
+stepsize_callback = StepsizeCallback(; cfl=0.5)
+callbacks = CallbackSet(summary_callback,analysis_callback,stepsize_callback)
+dt = stepsize_callback(ode)
+sol = solve(ode, SSPRK33(),dt=dt, dtmax = 1e-4,dtmin = 1e-12,save_everystep = false,saveat = 0.003, callback = callbacks)
+@gif for i in eachindex(sol)
+pd = PlotData2D(sol[i],semi)
+plt1 = Plots.plot(pd["a"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-0.1,0.2),label = "a")
+plt2 = Plots.plot(pd["QRθ"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-10,20),label="QRθ")
+plt3 = Plots.plot(pd["Qs"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-10,90),label="Qs")
+plot(plt1,plt2,plt3,layout=(1,3))
+end
+```
+
 ![Alt Text](./graph2d.gif)
