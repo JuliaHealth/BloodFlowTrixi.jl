@@ -236,13 +236,13 @@ function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientat
 end
 
 
-function Trixi.cons2prim(u, eq::BloodFlowEquations2D)
+function Trixi.prim2cons(u, eq::BloodFlowEquations2D)
     a, QRθ, Qs, E, A0,_,_,_,_,_,_ = u
     return SVector(a, QRθ, Qs, E, A0)
 end
 
 
-function Trixi.prim2cons(u, eq::BloodFlowEquations2D)
+function Trixi.cons2prim(u, eq::BloodFlowEquations2D)
     a, QRθ, Qs, E, A0 = u
     A = a + A0
     R = radius(u,eq)
