@@ -28,7 +28,7 @@ end
 Trixi.have_nonconservative_terms(::BloodFlowEquations1D) = Trixi.True()
 Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations1D) = ("a","Q","E","A0")
 
-Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations1D) = ("a","Q","E","A0","P","A","R","w","η")
+Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations1D) = ("a","Q","E","A0","P","A","R","w","eta")
 
 @doc raw"""
     friction(u, x, eq::BloodFlowEquations1D)
