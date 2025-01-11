@@ -60,6 +60,18 @@ pkg> add Trixi
 pkg> add https://github.com/your-repo/BloodFlowTrixi.jl
 ```
 
+## Future Plans
+
+**short term**
+- Design prim variables for 1D and 2D models.
+- Add 3D representations of the solutions for 1D and 2D models.
+- Design easy to use interfaces for users to define their own initial and boundary conditions and source terms.
+
+**long term**
+- Add 3D fluid-structure interaction models for complex arterial geometries.
+- Design support for artery networks and simulate vascular networks using the 2D and 1D model.
+- Autodiff support for 1D and 2D models for parameter optimization.
+
 ## License
 
 This package is licensed under the MIT license.
