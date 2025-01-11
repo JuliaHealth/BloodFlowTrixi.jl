@@ -464,10 +464,10 @@ The results can be visualized using the following code:
 ```julia
 @gif for i in eachindex(sol)
 pd = PlotData2D(sol[i],semi,solution_variables=cons2prim)
-plt1 = Plots.plot(pd["A"]; label = "$(sol.t[i])",aspect_ratio=0.2)
-plt2 = Plots.plot(pd["wtheta"]; label = "$(sol.t[i])",aspect_ratio=0.2)
-plt3 = Plots.plot(pd["ws"]; label = "$(sol.t[i])",aspect_ratio=0.2)
-plt4 = Plots.plot(pd["P"]; label = "$(sol.t[i])",aspect_ratio=0.2)
+plt1 = Plots.plot(pd["A"],aspect_ratio=0.2)
+plt2 = Plots.plot(pd["wtheta"],aspect_ratio=0.2)
+plt3 = Plots.plot(pd["ws"],aspect_ratio=0.2)
+plt4 = Plots.plot(pd["P"],aspect_ratio=0.2)
 plot(plt1,plt2,plt3,plt4,layout=(2,2))
 end
 ```
@@ -516,10 +516,10 @@ dt = stepsize_callback(ode)
 sol = solve(ode, SSPRK33(),dt=dt, dtmax = 1e-4,dtmin = 1e-12,save_everystep = false,saveat = 0.003, callback = callbacks)
 @gif for i in eachindex(sol)
 pd = PlotData2D(sol[i],semi,solution_variables=cons2prim)
-plt1 = Plots.plot(pd["A"]; label = "$(sol.t[i])",aspect_ratio=0.2)
-plt2 = Plots.plot(pd["wtheta"]; label = "$(sol.t[i])",aspect_ratio=0.2)
-plt3 = Plots.plot(pd["ws"]; label = "$(sol.t[i])",aspect_ratio=0.2)
-plt4 = Plots.plot(pd["P"]; label = "$(sol.t[i])",aspect_ratio=0.2)
+plt1 = Plots.plot(pd["A"],aspect_ratio=0.2)
+plt2 = Plots.plot(pd["wtheta"],aspect_ratio=0.2)
+plt3 = Plots.plot(pd["ws"],aspect_ratio=0.2)
+plt4 = Plots.plot(pd["P"],aspect_ratio=0.2)
 plot(plt1,plt2,plt3,plt4,layout=(2,2))
 end
 ```
