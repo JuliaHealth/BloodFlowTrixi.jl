@@ -467,7 +467,8 @@ pd = PlotData2D(sol[i],semi,solution_variables=cons2prim)
 plt1 = Plots.plot(pd["A"]; label = "$(sol.t[i])",aspect_ratio=0.2)
 plt2 = Plots.plot(pd["wtheta"]; label = "$(sol.t[i])",aspect_ratio=0.2)
 plt3 = Plots.plot(pd["ws"]; label = "$(sol.t[i])",aspect_ratio=0.2)
-plot(plt1,plt2,plt3,layout=(1,3))
+plt4 = Plots.plot(pd["P"]; label = "$(sol.t[i])",aspect_ratio=0.2)
+plot(plt1,plt2,plt3,plt4,layout=(2,2))
 end
 ```
 This code generates an animated GIF showing the evolution of the velocity profile over time. The velocity is computed as $Q/A$, where $Q$ is the flow rate, and $A$ is the cross-sectional area.
@@ -518,7 +519,8 @@ pd = PlotData2D(sol[i],semi,solution_variables=cons2prim)
 plt1 = Plots.plot(pd["A"]; label = "$(sol.t[i])",aspect_ratio=0.2)
 plt2 = Plots.plot(pd["wtheta"]; label = "$(sol.t[i])",aspect_ratio=0.2)
 plt3 = Plots.plot(pd["ws"]; label = "$(sol.t[i])",aspect_ratio=0.2)
-plot(plt1,plt2,plt3,layout=(1,3))
+plt4 = Plots.plot(pd["P"]; label = "$(sol.t[i])",aspect_ratio=0.2)
+plot(plt1,plt2,plt3,plt4,layout=(2,2))
 end
 ```
 
