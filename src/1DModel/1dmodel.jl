@@ -28,7 +28,7 @@ end
 Trixi.have_nonconservative_terms(::BloodFlowEquations1D) = Trixi.True()
 Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations1D) = ("a","Q","E","A0")
 
-Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations1D) = ("a","Q","E","A0","P","A","R","w","eta")
+Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations1D) = ("A","w","P","A0","P")
 
 @doc raw"""
     friction(u, x, eq::BloodFlowEquations1D)
@@ -332,11 +332,8 @@ function Trixi.cons2prim(u,eq::BloodFlowEquations1D)
     a,Q,E,A0 = u
     P = pressure(u,eq)
     A = a+A0
-    R = radius(u,eq)
     w = Q/A
-    R0 = sqrt(A0/pi)
-    η = R-R0
-    return SVector(a,Q,E,A0,P,A,R,w,η)
+    return SVector(A,w,P,A0)
 end
 
 @doc raw"""
@@ -352,6 +349,9 @@ Converts the primitive variables to conserved variables.
 Conserved variable vector.
 """
 function Trixi.prim2cons(u,eq::BloodFlowEquations1D)
-    a,Q,E,A0,_,_,_,_,_ = u
+    A,w,P,A0 = u
+    a = A-A0
+    Q = w*A
+    E = P/sqrt(pi)*A0/(sqrt(A)-sqrt(A0))*(1-eq.xi^2)/eq.h
     return SVector(a,Q,E,A0)
 end
