@@ -1,12 +1,12 @@
 @doc raw"""
-    initial_condition_convergence_test(x, t, eq::BloodFlowEquations1D)
+    initial_condition_convergence_test(x, t, eq::BloodFlowEquations2D)
 
 Generates a smooth initial condition for convergence tests of the blood flow equations.
 
 ### Parameters
 - `x`: Position vector.
 - `t`: Time scalar.
-- `eq::BloodFlowEquations1D`: Instance of the blood flow model.
+- `eq::BloodFlowEquations2D`: Instance of the blood flow model.
 
 ### Returns
 Initial condition state vector with zero initial area perturbation, sinusoidal flow rate, a constant elasticity modulus, and reference area.
@@ -20,7 +20,7 @@ The returned initial condition has:
 
 This initial condition can be used to verify the accuracy and stability of numerical solvers.
 """
-function Trixi.initial_condition_convergence_test(x, t, eq::BloodFlowEquations1D)
+function Trixi.initial_condition_convergence_test(x, t, eq::BloodFlowEquations2D)
     T = eltype(x)
     R0 = T(1.0)
     A0 = T(pi) * R0^2
@@ -30,7 +30,7 @@ function Trixi.initial_condition_convergence_test(x, t, eq::BloodFlowEquations1D
 end
 
 @doc raw"""
-    source_terms_convergence_test(u, x, t, eq::BloodFlowEquations1D)
+    source_terms_convergence_test(u, x, t, eq::BloodFlowEquations2D)
 
 Computes the source terms for convergence tests of the blood flow equations.
 
@@ -38,7 +38,7 @@ Computes the source terms for convergence tests of the blood flow equations.
 - `u`: State vector containing area perturbation, flow rate, elasticity modulus, and reference area.
 - `x`: Position vector.
 - `t`: Time scalar.
-- `eq::BloodFlowEquations1D`: Instance of the blood flow model.
+- `eq::BloodFlowEquations2D`: Instance of the blood flow model.
 
 ### Returns
 Source terms vector.
@@ -52,7 +52,7 @@ The radius `R` is computed using the `radius` function, and the friction coeffic
 
 This function is useful for evaluating the correctness of source term handling in numerical solvers.
 """
-function Trixi.source_terms_convergence_test(u, x, t, eq::BloodFlowEquations1D)
+function Trixi.source_terms_convergence_test(u, x, t, eq::BloodFlowEquations2D)
     T = eltype(u)
     A0 = u[4]
     s1 = pi * t * cospi(x[1] * t) |> T
