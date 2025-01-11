@@ -463,10 +463,10 @@ Here, `SSPRK33()` is a third-order Strong Stability Preserving Runge-Kutta metho
 The results can be visualized using the following code:
 ```julia
 @gif for i in eachindex(sol)
-pd = PlotData2D(sol[i],semi)
-plt1 = Plots.plot(pd["a"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-0.1,0.2),label = "a")
-plt2 = Plots.plot(pd["QRθ"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-10,20),label="QRθ")
-plt3 = Plots.plot(pd["Qs"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-10,90),label="Qs")
+pd = PlotData2D(sol[i],semi,solution_variables=cons2prim)
+plt1 = Plots.plot(pd["A"]; label = "$(sol.t[i])",aspect_ratio=0.2)
+plt2 = Plots.plot(pd["wtheta"]; label = "$(sol.t[i])",aspect_ratio=0.2)
+plt3 = Plots.plot(pd["ws"]; label = "$(sol.t[i])",aspect_ratio=0.2)
 plot(plt1,plt2,plt3,layout=(1,3))
 end
 ```
@@ -514,10 +514,10 @@ callbacks = CallbackSet(summary_callback,analysis_callback,stepsize_callback)
 dt = stepsize_callback(ode)
 sol = solve(ode, SSPRK33(),dt=dt, dtmax = 1e-4,dtmin = 1e-12,save_everystep = false,saveat = 0.003, callback = callbacks)
 @gif for i in eachindex(sol)
-pd = PlotData2D(sol[i],semi)
-plt1 = Plots.plot(pd["a"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-0.1,0.2),label = "a")
-plt2 = Plots.plot(pd["QRθ"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-10,20),label="QRθ")
-plt3 = Plots.plot(pd["Qs"]; title = "$(sol.t[i])",aspect_ratio=0.2,clim=(-10,90),label="Qs")
+pd = PlotData2D(sol[i],semi,solution_variables=cons2prim)
+plt1 = Plots.plot(pd["A"]; label = "$(sol.t[i])",aspect_ratio=0.2)
+plt2 = Plots.plot(pd["wtheta"]; label = "$(sol.t[i])",aspect_ratio=0.2)
+plt3 = Plots.plot(pd["ws"]; label = "$(sol.t[i])",aspect_ratio=0.2)
 plot(plt1,plt2,plt3,layout=(1,3))
 end
 ```
