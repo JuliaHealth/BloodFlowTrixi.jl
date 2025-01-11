@@ -237,7 +237,7 @@ end
 
 
 function Trixi.cons2prim(u, eq::BloodFlowEquations2D)
-    a, QRθ, Qs, E, A0 = u
+    a, QRθ, Qs, E, A0,_,_,_,_,_,_ = u
     return SVector(a, QRθ, Qs, E, A0)
 end
 
