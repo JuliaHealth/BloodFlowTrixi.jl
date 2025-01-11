@@ -53,8 +53,9 @@ function boundary_condition_pressure_in(u_inner, normal,
     surface_flux_function,
     eq::BloodFlowEquations2D)
         Pin = ifelse(t < 0.125, 2e4 * sinpi(t / 0.125)^2, 0.0)
-        Ain = inv_pressure(Pin, u_inner, eq)
         A0in = u_inner[5]
+        Ain = inv_pressure(Pin, u_inner, eq)
+        # @info abs(Ain - A0in)
         ain = Ain - A0in
         u_boundary =  SVector(
             ain,
@@ -63,14 +64,7 @@ function boundary_condition_pressure_in(u_inner, normal,
             u_inner[4],
             u_inner[5]
         )
-        # calculate the boundary flux
-        # if normal[2]>0 # u_inner is "left" of boundary, u_boundary is "right" of boundary
-            flux = normal[2]*surface_flux_function(u_inner, u_boundary, normal,
+            flux = surface_flux_function(u_boundary,u_inner, normal,
             eq)
-        # else # u_boundary is "left" of boundary, u_inner is "right" of boundary
-            # flux = surface_flux_function(u_boundary, u_inner, normal,
-        # eq)
-        # end
-    
         return flux
     end
