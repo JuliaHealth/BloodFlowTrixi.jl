@@ -224,7 +224,8 @@ function pressure_der(u, eq::BloodFlowEquations2D)
     A0 = u[5]
     xi = eq.xi
     h = eq.h
-    return T((E * h / sqrt(2)) / (1 - xi^2) * 0.5 / (sqrt(A) * A0))
+    b = E*h/(1-xi^2)
+    return T( (b / sqrt(2))* 0.5 / (sqrt(A) * A0))
 end
 
 
