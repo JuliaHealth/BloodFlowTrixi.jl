@@ -7,15 +7,20 @@ function initial_condition_simple(x, t, eq::BloodFlowEquations2D; R0=2.0)
     return SVector(zero(T), QRθ,Qs, E, A0)
 end
 
+curvature(x) = typeof(x)(1.0)
 function source_term_simple(u, x, t, eq::BloodFlowEquations2D)
     T = eltype(u)
-    a, Q, _, A0 = u
+    a, QRθ, Qs, _, A0 = u
     A = a + A0
     s1 = zero(T)
     k = friction(u, x, eq)
     R = radius(u, eq)
-    s2 = T(0.0)
-    s3 = T(0.0)
+    s2 = T(
+        2*R/3*curvature(x[2])*sin(x[1])*Qs^2/A + 3*R*k*QRθ/A
+    )
+    s3 = T(
+        -2*R/3*curvature(x[2])*sin(x[1])*Qs*QRθ/A + R*k*Qs/A
+    )
     return SVector(s1, s2, s3,0, 0)
 end
 
