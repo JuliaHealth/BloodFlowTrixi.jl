@@ -36,7 +36,7 @@ end
 Trixi.have_nonconservative_terms(::BloodFlowEquations2D) = Trixi.True()
 Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations2D) = ("a","QRθ","Qs","E","A0")
 
-Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations2D) = ("a","QRθ","Qs","E","A0","P","A","R","wtheta","ws","eta")
+Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations2D) = ("A","wtheta","ws","P","A0")
 
 
 function friction(u,x,eq::BloodFlowEquations2D)
@@ -237,7 +237,11 @@ end
 
 
 function Trixi.prim2cons(u, eq::BloodFlowEquations2D)
-    a, QRθ, Qs, E, A0,_,_,_,_,_,_ = u
+    A, wθ, ws, P, A0 = u
+    a = A - A0
+    QRθ = wθ * A * sqrt(2*A)*3/4
+    Qs = ws * A
+    E = P*sqrt(2)*A0/(sqrt(A)-sqrt(A0))*(1-eq.xi^2)/eq.h
     return SVector(a, QRθ, Qs, E, A0)
 end
 
@@ -251,5 +255,5 @@ function Trixi.cons2prim(u, eq::BloodFlowEquations2D)
     R0 = sqrt(2*A0)
     η = R - R0
     P = pressure(u,eq)
-    return SVector(a, QRθ, Qs, E, A0,P, A,R,ws, wθ, η)
+    return SVector(A, wθ, ws, P, A0)
 end
