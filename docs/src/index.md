@@ -4,11 +4,6 @@ CurrentModule = BloodFlowTrixi
 
 # BloodFlowTrixi.jl
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://yolhan83.github.io/BloodFlowTrixi.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://yolhan83.github.io/BloodFlowTrixi.jl/dev/)
-[![Build Status](https://github.com/yolhan83/BloodFlowTrixi.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/yolhan83/BloodFlowTrixi.jl/actions/workflows/CI.yml?query=branch%3Amaster)
-[![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
-
 **BloodFlowTrixi.jl** is a Julia package that implements one-dimensional (1D) and two-dimensional (2D) blood flow models for arterial circulation. These models are derived from the Navier-Stokes equations and were developed as part of my PhD research in applied mathematics, focusing on cardiovascular pathologies such as aneurysms and stenoses.
 
 ## Description
@@ -49,10 +44,7 @@ Both models were designed to be used with **[Trixi.jl](https://github.com/trixi-
 - **1D and 2D models** for arterial blood flow.
 - Derived from the Navier-Stokes equations with appropriate assumptions for compliant arteries.
 - To be used with **Trixi.jl** for DG-based numerical simulations.
-
-## 
 - Support for curvilinear geometries and compliant wall dynamics.
-- Validated through peer-reviewed research articles.
 
 ## Installation
 

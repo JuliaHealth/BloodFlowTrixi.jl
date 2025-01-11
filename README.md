@@ -45,10 +45,7 @@ Both models were designed to be used with **[Trixi.jl](https://github.com/trixi-
 - **1D and 2D models** for arterial blood flow.
 - Derived from the Navier-Stokes equations with appropriate assumptions for compliant arteries.
 - To be used with **Trixi.jl** for DG-based numerical simulations.
-
-## 
 - Support for curvilinear geometries and compliant wall dynamics.
-- Validated through peer-reviewed research articles.
 
 ## Installation
 
