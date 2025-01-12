@@ -34,43 +34,6 @@ function BloodFlowEquations2D(;h,rho=1.0,xi=0.25,nu=0.04)
 end
 
 Trixi.have_nonconservative_terms(::BloodFlowEquations2D) = Trixi.True()
-Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations2D) = ("a","QRθ","Qs","E","A0")
-
-Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations2D) = ("A","wtheta","ws","P","A0")
-
-
-function friction(u,x,eq::BloodFlowEquations2D)
-    R = radius(u,eq) # Compute the radius based on cross-sectional area
-    return eltype(u)(-11 * eq.nu / R) # Return friction term based on viscosity and radius
-end
-
-function boundary_condition_outflow(u_inner, orientation_or_normal, direction, x, t, surface_flux_function, eq::BloodFlowEquations2D)
-    # Calculate the boundary flux without reflection
-    flux = surface_flux_function(u_inner, u_inner, orientation_or_normal, eq)
-    return flux
-end
-
-
-function boundary_condition_outflow(u_inner, orientation_or_normal, x, t, surface_flux_function, eq::BloodFlowEquations2D)
-    # Calculate the boundary flux without reflection
-    flux = surface_flux_function(u_inner, u_inner, orientation_or_normal, eq)
-    return flux
-end
-
-
-function boundary_condition_slip_wall(u_inner, orientation_or_normal, direction, x, t, surface_flux_function, eq::BloodFlowEquations2D)
-    # Create the external boundary solution state with reflected normal velocity
-    u_boundary = SVector(u_inner[1], -u_inner[2], u_inner[3], u_inner[4])
-
-    # Calculate the boundary flux based on direction
-    if iseven(direction)
-        flux = surface_flux_function(u_inner, u_boundary, orientation_or_normal, eq)
-    else
-        flux = surface_flux_function(u_boundary, u_inner, orientation_or_normal, eq)
-    end
-    return flux
-end
-
 
 function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations2D)
     P = pressure(u, eq) # Compute pressure from state vector
@@ -187,48 +150,6 @@ function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
 end
 
 
-function pressure(u, eq::BloodFlowEquations2D)
-    T = eltype(u)
-    A = u[1] + u[5]
-    E = u[4]
-    A0 = u[5]
-    R = radius(u,eq)
-    R0 = sqrt(2*A0)
-    xi = eq.xi
-    h = eq.h
-    b = E * h / (1 - xi^2) # Precompute constant b
-    return T(b * (R - R0) / R0^2)
-end
-
-
-function radius(u, eq::BloodFlowEquations2D)
-    return sqrt((u[1] + u[5]) * 2) # Compute radius from cross-sectional area
-end
-
-
-function inv_pressure(p, u, eq::BloodFlowEquations2D)
-    T = eltype(u)
-    E = u[4]
-    A0 = u[5]
-    R0 = sqrt(2*A0)
-    xi = eq.xi
-    h = eq.h
-    b = E * h / (1 - xi^2) # Precompute constant b
-    return T((R0^2 * p / b + R0)^2/2)
-end
-
-function pressure_der(u, eq::BloodFlowEquations2D)
-    T = eltype(u)
-    A = u[1] + u[5]
-    E = u[4]
-    A0 = u[5]
-    xi = eq.xi
-    h = eq.h
-    b = E*h/(1-xi^2)
-    return T( (b / sqrt(2))* 0.5 / (sqrt(A) * A0))
-end
-
-
 function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations2D)
     λ = dissipation.max_abs_speed(u_ll, u_rr, orientation_or_normal_direction, eq)
     diss = -0.5 .* λ .* (u_rr .- u_ll) # Compute dissipation term
@@ -236,24 +157,7 @@ function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientat
 end
 
 
-function Trixi.prim2cons(u, eq::BloodFlowEquations2D)
-    A, wθ, ws, P, A0 = u
-    a = A - A0
-    QRθ = wθ * A * sqrt(2*A)*3/4
-    Qs = ws * A
-    E = P*sqrt(2)*A0/(sqrt(A)-sqrt(A0))*(1-eq.xi^2)/eq.h
-    return SVector(a, QRθ, Qs, E, A0)
-end
-
-
-function Trixi.cons2prim(u, eq::BloodFlowEquations2D)
-    a, QRθ, Qs, E, A0 = u
-    A = a + A0
-    R = radius(u,eq)
-    ws = Qs / A
-    wθ = (4/3*QRθ/R) / A
-    R0 = sqrt(2*A0)
-    η = R - R0
-    P = pressure(u,eq)
-    return SVector(A, wθ, ws, P, A0)
-end
+include("./2DModel/variables.jl")
+include("./2DModel/bc1d.jl")
+include("./2Dmodel/Test_Cases/pressure_in.jl")
+include("./2Dmodel/Test_Cases/convergence_test.jl")
