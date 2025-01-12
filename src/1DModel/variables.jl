@@ -22,6 +22,15 @@ function Trixi.cons2prim(u,eq::BloodFlowEquations1D)
     return SVector(A,w,P,A0)
 end
 
+function Trixi.cons2entropy(u,eq::BloodFlowEquations1D)
+    a,Q,E,A0 = u
+    P = pressure(u,eq)
+    A = a+A0
+    w = Q/A
+    En = entropy(u,eq)
+    return SVector(A,w,En,A0)
+end
+
 @doc raw"""
     Trixi.prim2cons(u, eq::BloodFlowEquations1D)
 

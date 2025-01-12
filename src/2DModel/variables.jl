@@ -25,6 +25,19 @@ function Trixi.cons2prim(u, eq::BloodFlowEquations2D)
     return SVector(A, wθ, ws, P, A0)
 end
 
+function Trixi.cons2entropy(u, eq::BloodFlowEquations2D)
+    a, QRθ, Qs, E, A0 = u
+    A = a + A0
+    R = radius(u,eq)
+    ws = Qs / A
+    wθ = (4/3*QRθ/R) / A
+    R0 = sqrt(2*A0)
+    η = R - R0
+    P = pressure(u,eq)
+    En = entropy(u,eq)
+    return SVector(A, wθ, ws, En, A0)
+end
+
 function friction(u,x,eq::BloodFlowEquations2D)
     R = radius(u,eq) # Compute the radius based on cross-sectional area
     return eltype(u)(-11 * eq.nu / R) # Return friction term based on viscosity and radius
