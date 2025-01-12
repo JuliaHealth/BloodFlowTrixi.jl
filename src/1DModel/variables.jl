@@ -2,6 +2,8 @@ Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations1D) = ("a","Q","E","A0")
 
 Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations1D) = ("A","w","P","A0","P")
 
+Trixi.varnames(::typeof(cons2entropy),::BloodFlowEquations1D) = ("A","w","En","A0","P")
+
 @doc raw"""
     Trixi.cons2prim(u, eq::BloodFlowEquations1D)
 

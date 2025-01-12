@@ -2,6 +2,8 @@ Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations2D) = ("a","QRθ","Qs","E
 
 Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations2D) = ("A","wtheta","ws","P","A0")
 
+Trixi.varnames(::typeof(cons2entropy),::BloodFlowEquations2D) = ("A","wtheta","ws","En","A0")
+
 
 function Trixi.prim2cons(u, eq::BloodFlowEquations2D)
     A, wθ, ws, P, A0 = u
