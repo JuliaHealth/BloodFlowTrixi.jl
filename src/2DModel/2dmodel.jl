@@ -102,7 +102,7 @@ function flux_nonconservative(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     # else
         fn2 = SVector(zero(T), 0, -pmean * Ajump, 0, 0)
     # end
-    return @. abs(fn1*normal[1] + fn2*normal[2])
+    return @. fn1*normal[1] + fn2*normal[2]
 end
 
 
