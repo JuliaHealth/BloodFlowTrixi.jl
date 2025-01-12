@@ -146,3 +146,13 @@ function pressure_der(u,eq::BloodFlowEquations1D)
     h = eq.h
     return T(E*h*sqrt(pi)/(1-xi^2)*0.5/(sqrt(A)*A0))
 end
+
+function Trixi.entropy(u,eq::BloodFlowEquations1D)
+    up = cons2prim(u,eq)
+    _,_,E,_ = u
+    A,w,P,A0 = up
+    psi = w^2/2+P
+    b = E*eq.h/(1-eq.xi^2)
+    pt = b*sqrt(pi)/(3*A0)*A^(3/2)
+    return A*psi - pt
+end

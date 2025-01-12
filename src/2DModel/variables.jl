@@ -70,3 +70,14 @@ function pressure_der(u, eq::BloodFlowEquations2D)
     b = E*h/(1-xi^2)
     return T( (b / sqrt(2))* 0.5 / (sqrt(A) * A0))
 end
+
+
+function Trixi.entropy(u,eq::BloodFlowEquations2D)
+    up = cons2prim(u,eq)
+    _,_,_,E,_ = u
+    A,wt,ws,P,A0 = up
+    psi = (ws^2+wt^2*9/8)/2 + P
+    b = E*eq.h/(1-eq.xi^2)
+    pt = b/sqrt(2)/(3*A0)*A^(3/2)
+    return A*psi - pt
+end
