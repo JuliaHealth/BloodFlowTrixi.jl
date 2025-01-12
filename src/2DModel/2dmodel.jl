@@ -102,7 +102,7 @@ function flux_nonconservative(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     # else
         fn2 = SVector(zero(T), 0, -pmean * Ajump, 0, 0)
     # end
-    return @. fn1*normal[1] + fn2*normal[2]
+    return @. abs(fn1*normal[1] + fn2*normal[2])
 end
 
 
@@ -128,18 +128,14 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     A_rr = a_rr + A0_rr
     pp_ll = pressure_der(u_ll, eq)
     pp_rr = pressure_der(u_rr, eq)
-    # if orientation == 1
-        sp1 =  max(
-            max(abs(QRθ_ll)/A_ll^2, abs(QRθ_rr)/A_rr^2), 
-            max(sqrt(pp_ll), sqrt(pp_rr))
-            )
-    # else
         ws_ll = Qs_ll / A_ll
         ws_rr = Qs_rr / A_rr
-        sp2 =  max(abs(ws_ll), abs(ws_rr)) + 
-                max(sqrt(A_ll * pp_ll), sqrt(A_rr * pp_rr))
-    # end
-    return abs.(sp1.*normal[1] .+ sp2.*normal[2])
+    return max(
+        abs(ws_ll*normal[2] + sqrt(A_ll*pp_ll)*sqrt(normal[1]^2/A_ll + normal[2]^2)),
+        abs(ws_rr*normal[2] + sqrt(A_rr*pp_rr)*sqrt(normal[1]^2/A_rr + normal[2]^2)),
+        abs(ws_ll*normal[2] + QRθ_ll/A_ll^2*normal[1]),
+        abs(ws_rr*normal[2] + QRθ_rr/A_rr^2*normal[1])
+    )
 end
 
 function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
