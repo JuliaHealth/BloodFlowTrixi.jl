@@ -1,8 +1,8 @@
-# Summary of the 1D and 2D Blood Flow Models and Numerical Approximation
+## Summary of the 1D and 2D Blood Flow Models and Numerical Approximation
 
-## 1D Blood Flow Model
+### 1D Blood Flow Model
 
-### Model Assumptions (1D)
+#### Model Assumptions (1D)
 
 1. **H1**: Thin wall and plane stresses — the artery wall thickness is constant and small enough to allow a shell-type representation.
 2. **H2**: Radial displacement — the artery displacements occur only in the radial direction.
@@ -10,11 +10,11 @@
 4. **H4**: Incompressibility — the wall tissue is incompressible.
 5. **H5**: Dominance of circumferential stresses — axial stresses are negligible compared to circumferential ones.
 
-### Asymptotic Analysis (1D)
+#### Asymptotic Analysis (1D)
 
 The model is derived from the incompressible Navier-Stokes equations in cylindrical coordinates under the **thin-artery assumption** (small ratio of radius to length). A section-averaged approach is applied to reduce the three-dimensional problem to a one-dimensional model.
 
-#### Non-Dimensionalization
+##### Non-Dimensionalization
 
 Dimensionless variables are introduced using the following scaling:
 
@@ -25,7 +25,7 @@ Dimensionless variables are introduced using the following scaling:
 
 A small parameter \( \epsilon \) representing the ratio of radius to length is used for asymptotic expansion.
 
-### 1D Model Equations
+#### 1D Model Equations
 
 The derived one-dimensional section-averaged model is given by:
 
@@ -48,7 +48,7 @@ P(A, x) = b(x) \frac{\sqrt{A} - \sqrt{A_0}}{A_0},
 
 with \( b(x) \) representing the artery's elastic properties.
 
-### Energy Consistency Theorem (1D)
+#### Energy Consistency Theorem (1D)
 
 Let \((A, u_x)\) be a smooth solution of the system, where \( u_x = \frac{Q}{A} \) is the mean velocity. The total energy \( E \) is defined by:
 
@@ -72,9 +72,9 @@ This shows that the total energy decreases over time, accounting for viscous dis
 
 ---
 
-## 2D Blood Flow Model
+### 2D Blood Flow Model
 
-### Model Assumptions (2D)
+#### Model Assumptions (2D)
 
 1. **H1**: Thin wall and plane stresses — the vessel wall thickness is assumed constant and sufficiently thin to allow a shell-type representation.
 2. **H2**: Radial displacement — displacements of the artery occur only in the radial direction.
@@ -82,7 +82,7 @@ This shows that the total energy decreases over time, accounting for viscous dis
 4. **H4**: Incompressibility — the artery wall tissue is incompressible.
 5. **H5**: Dominance of circumferential stresses — stresses acting in the axial direction can be neglected compared to those in the circumferential direction.
 
-### Asymptotic Analysis (2D)
+#### Asymptotic Analysis (2D)
 
 Under the **thin-artery assumption** (small ratio between the radius and length), an asymptotic expansion of the Navier-Stokes equations was performed to first order in terms of a parameter \( \epsilon \). This leads to a radially averaged two-dimensional model while neglecting higher-order terms in \( \epsilon \).
 
@@ -93,7 +93,7 @@ The dimensional equations are rewritten in non-dimensional form using appropriat
 - Pressure: \( \tilde{p} \)
 - Velocity: \( \tilde{u}_s, \tilde{u}_r, \tilde{u}_\theta \)
 
-### 2D Model Equations
+#### 2D Model Equations
 
 The radially averaged two-dimensional system is given by:
 
@@ -108,7 +108,7 @@ The radially averaged two-dimensional system is given by:
 \]
 ```
 
-### Energy Consistency Theorem (2D)
+#### Energy Consistency Theorem (2D)
 
 Let \((A, u_\theta, u_s)\) be a smooth solution of the 2D system. The total energy \( E \) is defined as:
 
