@@ -164,6 +164,6 @@ function Trixi.entropy(u,eq::BloodFlowEquations1D)
     A,w,P,A0 = up
     psi = w^2/2+P
     b = E*eq.h/(1-eq.xi^2)
-    pt = b*sqrt(pi)/(3*A0)*A^(3/2)
+    pt = b*sqrt(pi)/(3*A0)*(A^(3/2)-A0^(3/2))
     return A*psi - pt
 end
