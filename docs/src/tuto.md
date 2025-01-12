@@ -281,7 +281,7 @@ mesh = P4estMesh(
     coordinates_min =(0.0,0.0),
     coordinates_max = (2*pi,40.0),
     initial_refinement_level = 4,
-    periodicity = (false, false)
+    periodicity = (true, false)
 )
 ```
 This generates a non-periodic mesh for the domain $[0,2\pi] \times [0, 40]$, with $2\times 4\times 4^{\text{initial-refinement-level}}$ cells. 
@@ -289,8 +289,6 @@ This generates a non-periodic mesh for the domain $[0,2\pi] \times [0, 40]$, wit
 In **Trixi.jl**, the P4est mesh has four labeled boundaries: ***x_neg*** (left boundary), ***x_pos*** (right boundary), ***y_neg*** (bottom boundary), and ***y_pos*** (top boundary). These labels are used to apply boundary conditions:
 ```julia
 bc = Dict(
-    :x_neg =>Trixi.BoundaryConditionDoNothing(),
-    :x_pos =>Trixi.BoundaryConditionDoNothing(),
     :y_neg =>boundary_condition_pressure_in,
     :y_pos => Trixi.BoundaryConditionDoNothing()
     )
@@ -298,8 +296,6 @@ bc = Dict(
 ```
 - `boundary_condition_pressure_in` applies a pressure inflow condition at the bottom boundary.
 - `Trixi.BoundaryConditionDoNothing()` specifies a "do nothing" boundary condition at the right boundary, meaning no flux is imposed.
-
-BUG WITH THE PERIODIC BOUNARY CONDITIONS.
 
 ### Boundary condition implementation
 The inflow boundary condition is defined as:
@@ -485,11 +481,9 @@ mesh = P4estMesh(
     coordinates_min =(0.0,0.0),
     coordinates_max = (2*pi,40.0),
     initial_refinement_level = 4,
-    periodicity = (false, false)
+    periodicity = (true, false)
 )
 bc = Dict(
-    :x_neg =>Trixi.BoundaryConditionDoNothing(),
-    :x_pos =>Trixi.BoundaryConditionDoNothing(),
     :y_neg =>boundary_condition_pressure_in,
     :y_pos => Trixi.BoundaryConditionDoNothing()
     )
