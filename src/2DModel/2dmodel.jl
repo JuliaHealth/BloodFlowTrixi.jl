@@ -139,7 +139,7 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
         sp2 =  max(abs(ws_ll), abs(ws_rr)) + 
                 max(sqrt(A_ll * pp_ll), sqrt(A_rr * pp_rr))
     # end
-    return sp1.*normal[1] .+ sp2.*normal[2]
+    return abs.(sp1.*normal[1] .+ sp2.*normal[2])
 end
 
 function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
@@ -152,7 +152,7 @@ end
 
 function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations2D)
     λ = dissipation.max_abs_speed(u_ll, u_rr, orientation_or_normal_direction, eq)
-    diss = -0.5 .* λ .* (u_rr .- u_ll) # Compute dissipation term
+    diss = -0.5 .* abs(λ) .* (u_rr .- u_ll) # Compute dissipation term
     return SVector(diss[1], diss[2], diss[3], 0, 0)
 end
 
