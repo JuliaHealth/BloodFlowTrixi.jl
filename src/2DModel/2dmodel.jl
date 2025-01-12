@@ -157,7 +157,7 @@ function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientat
 end
 
 
-include("./2DModel/variables.jl")
-include("./2DModel/bc1d.jl")
-include("./2Dmodel/Test_Cases/pressure_in.jl")
-include("./2Dmodel/Test_Cases/convergence_test.jl")
+include("./variables.jl")
+include("./bc2d.jl")
+include("./Test_Cases/pressure_in.jl")
+include("./Test_Cases/convergence_test.jl")

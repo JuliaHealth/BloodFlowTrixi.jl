@@ -138,7 +138,7 @@ function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr,
     return SVector(diss[1], diss[2],0,0)
 end
 
-include("./1DModel/variables.jl")
-include("./1DModel/bc1d.jl")
-include("./1Dmodel/Test_Cases/pressure_in.jl")
-include("./1Dmodel/Test_Cases/convergence_test.jl")
+include("./variables.jl")
+include("./bc1d.jl")
+include("./Test_Cases/pressure_in.jl")
+include("./Test_Cases/convergence_test.jl")
