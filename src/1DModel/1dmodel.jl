@@ -134,7 +134,7 @@ function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr,
     eq::BloodFlowEquations1D)
     λ = dissipation.max_abs_speed(u_ll, u_rr, orientation_or_normal_direction,
     eq)
-    diss = -0.5f0 .* λ .* (u_rr .- u_ll)
+    diss = -0.5f0 .* abs(λ) .* (u_rr .- u_ll)
     return SVector(diss[1], diss[2],0,0)
 end
 
