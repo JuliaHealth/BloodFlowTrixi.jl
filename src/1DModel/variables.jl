@@ -1,7 +1,40 @@
+@doc raw"""
+    Trixi.varnames(::typeof(cons2cons), ::BloodFlowEquations1D)
+Returns the variable names corresponding to the conserved variables in the blood flow model.
+
+### Parameters
+- `::typeof(cons2cons)`: Type indicating conserved to conserved variable conversion.
+- `::BloodFlowEquations1D`: Instance of `BloodFlowEquations1D`.
+
+### Returns
+A tuple of variable names: `("a", "Q", "E", "A0")`.
+"""
 Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations1D) = ("a","Q","E","A0")
 
+@doc raw"""
+    Trixi.varnames(::typeof(cons2prim), ::BloodFlowEquations1D)
+Returns the variable names corresponding to the primitive variables in the blood flow model.
+
+### Parameters
+- `::typeof(cons2prim)`: Type indicating conserved to primitive variable conversion.
+- `::BloodFlowEquations1D`: Instance of `BloodFlowEquations1D`.
+
+### Returns
+A tuple of variable names: `("A", "w", "P", "A0", "P")`.
+"""
 Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations1D) = ("A","w","P","A0","P")
 
+@doc raw"""
+    Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations1D)
+Returns the variable names corresponding to the entropy variables in the blood flow model.
+
+### Parameters
+- `::typeof(cons2entropy)`: Type indicating conserved to entropy variable conversion.
+- `::BloodFlowEquations1D`: Instance of `BloodFlowEquations1D`.
+
+### Returns
+A tuple of variable names: `("A", "w", "En", "A0", "P")`.
+"""
 Trixi.varnames(::typeof(cons2entropy),::BloodFlowEquations1D) = ("A","w","En","A0","P")
 
 @doc raw"""
@@ -24,6 +57,17 @@ function Trixi.cons2prim(u,eq::BloodFlowEquations1D)
     return SVector(A,w,P,A0)
 end
 
+@doc raw"""
+    Trixi.cons2entropy(u, eq::BloodFlowEquations1D)
+Converts the conserved variables to entropy variables.
+
+### Parameters
+- `u`: State vector.
+- `eq`: Instance of `BloodFlowEquations1D`.
+
+### Returns
+Entropy variable vector.
+"""
 function Trixi.cons2entropy(u,eq::BloodFlowEquations1D)
     a,Q,E,A0 = u
     P = pressure(u,eq)
@@ -158,6 +202,17 @@ function pressure_der(u,eq::BloodFlowEquations1D)
     return T(E*h*sqrt(pi)/(1-xi^2)*0.5/(sqrt(A)*A0))
 end
 
+@doc raw"""
+    Trixi.entropy(u, eq::BloodFlowEquations1D)
+Computes the entropy of the system for the given state vector.
+
+### Parameters
+- `u`: State vector.
+- `eq`: Instance of `BloodFlowEquations1D`.
+
+### Returns
+Entropy as a scalar value.
+"""
 function Trixi.entropy(u,eq::BloodFlowEquations1D)
     up = cons2prim(u,eq)
     _,_,E,_ = u

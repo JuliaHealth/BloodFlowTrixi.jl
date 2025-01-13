@@ -35,6 +35,18 @@ end
 
 Trixi.have_nonconservative_terms(::BloodFlowEquations2D) = Trixi.True()
 
+@doc raw"""
+    Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations2D)
+Computes the flux vector for the conservation laws of the 2D blood flow model in either the \( \theta \)-direction or the \( s \)-direction, depending on the specified orientation.
+
+### Parameters
+- `u`: State vector.
+- `orientation::Integer`: Direction of the flux computation (1 for \( \theta \)-direction, otherwise \( s \)-direction).
+- `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+
+### Returns
+Flux vector as an `SVector`.
+"""
 function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations2D)
     P = pressure(u, eq) # Compute pressure from state vector
     a, QRθ, Qs, E, A0 = u 
@@ -52,6 +64,18 @@ function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations2D)
         return SVector(f1, f2, f3, 0, 0)
     end
 end
+@doc raw"""
+    Trixi.flux(u, normal, eq::BloodFlowEquations2D)
+Computes the flux vector for the conservation laws of the 2D blood flow model based on a normal vector.
+
+### Parameters
+- `u`: State vector.
+- `normal`: Normal vector indicating the direction of the flux.
+- `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+
+### Returns
+Flux vector as an `SVector`.
+"""
 function Trixi.flux(u, normal, eq::BloodFlowEquations2D)
     P = pressure(u, eq) # Compute pressure from state vector
     a, QRθ, Qs, E, A0 = u 
@@ -69,7 +93,20 @@ function Trixi.flux(u, normal, eq::BloodFlowEquations2D)
     return fl1 .* normal[1] .+ fl2 .* normal[2]
 end
 
+@doc raw"""
+    flux_nonconservative(u_ll, u_rr, orientation::Integer, eq::BloodFlowEquations2D)
+Computes the non-conservative flux for the 2D blood flow model based on the orientation.
 
+### Parameters
+- `u_ll`: Left state vector.
+- `u_rr`: Right state vector.
+- `orientation::Integer`: Direction index for the flux (1 for \( \theta \)-direction, otherwise \( s \)-direction).
+- `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+
+### Returns
+Non-conservative flux vector.
+
+"""
 function flux_nonconservative(u_ll, u_rr, orientation::Integer, eq::BloodFlowEquations2D)
     T = eltype(u_ll)
     p_ll = pressure(u_ll, eq)
@@ -87,6 +124,20 @@ function flux_nonconservative(u_ll, u_rr, orientation::Integer, eq::BloodFlowEqu
     end
 end
 
+@doc raw"""
+    flux_nonconservative(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
+Computes the non-conservative flux for the 2D blood flow model based on a normal vector.
+
+### Parameters
+- `u_ll`: Left state vector.
+- `u_rr`: Right state vector.
+- `normal`: Normal vector indicating the direction of the flux.
+- `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+
+### Returns
+Non-conservative flux vector.
+
+"""
 function flux_nonconservative(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     T = eltype(u_ll)
     p_ll = pressure(u_ll, eq)
@@ -105,7 +156,20 @@ function flux_nonconservative(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     return @. fn1*normal[1] + fn2*normal[2]
 end
 
+@doc raw"""
+    Trixi.max_abs_speed_naive(u_ll, u_rr, orientation::Integer, eq::BloodFlowEquations2D)
+Computes the maximum absolute speed for wave propagation in the 2D blood flow model using a naive approach, based on the given orientation.
 
+### Parameters
+- `u_ll`: Left state vector.
+- `u_rr`: Right state vector.
+- `orientation::Integer`: Direction index for the speed computation (1 for \( \theta \)-direction, otherwise \( s \)-direction).
+- `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+
+### Returns
+Maximum absolute speed.
+
+"""
 function Trixi.max_abs_speed_naive(u_ll, u_rr, orientation::Integer, eq::BloodFlowEquations2D)
     a_ll, QRθ_ll, Qs_ll, _, A0_ll = u_ll
     a_rr, QRθ_rr, Qs_rr, _, A0_rr = u_rr
@@ -121,6 +185,21 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, orientation::Integer, eq::BloodFl
         return max(abs(ws_ll), abs(ws_rr)) + max(sqrt(A_ll * pp_ll), sqrt(A_rr * pp_rr))
     end
 end
+
+@doc raw"""
+    Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
+Computes the maximum absolute speed for wave propagation in the 2D blood flow model using a naive approach, based on a normal vector.
+
+### Parameters
+- `u_ll`: Left state vector.
+- `u_rr`: Right state vector.
+- `normal`: Normal vector indicating the direction of wave propagation.
+- `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+
+### Returns
+Maximum absolute speed.
+
+"""
 function Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     a_ll, QRθ_ll, Qs_ll, _, A0_ll = u_ll
     a_rr, QRθ_rr, Qs_rr, _, A0_rr = u_rr
@@ -138,6 +217,19 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     )
 end
 
+@doc raw"""
+    Trixi.max_abs_speeds(u, eq::BloodFlowEquations2D)
+Computes the maximum absolute speeds for wave propagation in the 2D blood flow model in both \( \theta \)- and \( s \)-directions.
+
+### Parameters
+- `u`: State vector.
+- `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+
+### Returns
+Tuple containing the maximum absolute speeds in the \( \theta \)- and \( s \)-directions.
+
+
+"""
 function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
     a,QRθ,Qs,E,A0 = u 
     A = a+A0
@@ -145,6 +237,19 @@ function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
     return max(abs(QRθ/A^2),sqrt(pp)),abs(Qs/A) + sqrt(A*pp)
 end
 
+@doc raw"""
+    (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations2D)
+Computes the dissipation term using the Local Lax-Friedrichs method for the 2D blood flow model.
+
+### Parameters
+- `u_ll`: Left state vector.
+- `u_rr`: Right state vector.
+- `orientation_or_normal_direction`: Orientation index or normal vector indicating the direction of dissipation.
+- `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+
+### Returns
+Dissipation vector.
+"""
 
 function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations2D)
     λ = dissipation.max_abs_speed(u_ll, u_rr, orientation_or_normal_direction, eq)

@@ -104,7 +104,14 @@ function Trixi.max_abs_speed_naive(u_ll,u_rr,orientation::Integer,eq ::BloodFlow
 end
 
 @doc raw"""
-TODO
+Computes the maximum absolute speed for wave propagation in the model.
+
+### Parameters
+- `u`: State vector.
+- `eq::BloodFlowEquations1D`: Instance of `BloodFlowEquations1D`.
+
+### Returns
+Maximum absolute speed as a scalar value.
 """
 
 function Trixi.max_abs_speeds(u,eq::BloodFlowEquations1D)
