@@ -19,7 +19,7 @@ Les équations dérivées sont un système d’**équations hyperboliques** aux 
 
 2. **Conservation de la quantité de mouvement** :
 ```math
-∂_t Q + ∂_x \left( \alpha \frac{Q^2}{A} + \frac{1}{\rho} A P(A, x) \right) = \frac{1}{\rho} P(A, x) ∂_x A - K \frac{Q}{A}
+∂_t Q + ∂_x \left( \alpha \frac{Q^2}{A} + \frac{1}{\rho} A P(A, x) \right) - \partial_x \left( A \partial_x\left(\frac Q A\right) \right) = \frac{1}{\rho} P(A, x) ∂_x A - K \frac{Q}{A}
 ```
 
 ### Énergie et relation d’entropie du modèle 1D
