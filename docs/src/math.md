@@ -1,135 +1,90 @@
-## Summary of the 1D and 2D Blood Flow Models and Numerical Approximation
 
-### 1D Blood Flow Model
+# Modèles mathématiques 1D et 2D pour l’écoulement sanguin
 
-#### Model Assumptions (1D)
+## Modèle 1D
+Le modèle 1D repose sur une **intégration par section des équations de Navier-Stokes** sous l’hypothèse d’un **écoulement incompressible** dans des artères supposées fines. Ce modèle est particulièrement adapté pour des études globales du réseau artériel, où la géométrie est approximativement linéaire ou faiblement courbée.
 
-1. **H1**: Thin wall and plane stresses — the artery wall thickness is constant and small enough to allow a shell-type representation.
-2. **H2**: Radial displacement — the artery displacements occur only in the radial direction.
-3. **H3**: Small deformation gradients and linear elastic behavior — the artery behaves as a linear elastic solid.
-4. **H4**: Incompressibility — the wall tissue is incompressible.
-5. **H5**: Dominance of circumferential stresses — axial stresses are negligible compared to circumferential ones.
+### Hypothèses et simplifications
+- L’écoulement est considéré comme **incompressible**.
+- L’artère est modélisée comme un tube cylindrique de section variable en fonction de la pression.
+- Un profil de vitesse parabolique est utilisé, permettant une **moyennisation** sur la section transversale de l’artère.
 
-#### Asymptotic Analysis (1D)
+### Équations principales
+Les équations dérivées sont un système d’**équations hyperboliques** aux dérivées partielles décrivant la conservation de la masse et de la quantité de mouvement :
 
-The model is derived from the incompressible Navier-Stokes equations in cylindrical coordinates under the **thin-artery assumption** (small ratio of radius to length). A section-averaged approach is applied to reduce the three-dimensional problem to a one-dimensional model.
-
-##### Non-Dimensionalization
-
-Dimensionless variables are introduced using the following scaling:
-
-- Time: \( \tilde{t} = \frac{t}{T} \)
-- Space: \( \tilde{x}, \tilde{r} \)
-- Pressure: \( \tilde{p} \)
-- Velocity: \( \tilde{u}_x, \tilde{u}_r \)
-
-A small parameter \( \epsilon \) representing the ratio of radius to length is used for asymptotic expansion.
-
-#### 1D Model Equations
-
-The derived one-dimensional section-averaged model is given by:
-
+1. **Conservation de la masse** :
 ```math
-\[
-\begin{aligned}
-& \partial_t A + \partial_x Q = 0, \\
-& \partial_t Q + \partial_x \left( \frac{Q^2}{A} + \frac{1}{\rho} P(A, x) \right) - \partial_x \left( 3 \nu A \partial_x \left( \frac{Q}{A} \right) \right) = \frac{1}{\rho} P(A, x) \partial_x A + \frac{2 \pi R k}{1 - R k / (4 \nu)} \frac{Q}{A},
-\end{aligned}
-\]
+∂_t A + ∂_x Q = 0
 ```
 
-where \( A \) is the cross-sectional area, \( Q \) is the flow rate, and \( P(A, x) \) is the pressure given by:
-
+2. **Conservation de la quantité de mouvement** :
 ```math
-\[
-P(A, x) = b(x) \frac{\sqrt{A} - \sqrt{A_0}}{A_0},
-\]
+∂_t Q + ∂_x \left( \alpha \frac{Q^2}{A} + \frac{1}{\rho} A P(A, x) \right) = \frac{1}{\rho} P(A, x) ∂_x A - K \frac{Q}{A}
 ```
 
-with \( b(x) \) representing the artery's elastic properties.
-
-#### Energy Consistency Theorem (1D)
-
-Let \((A, u_x)\) be a smooth solution of the system, where \( u_x = \frac{Q}{A} \) is the mean velocity. The total energy \( E \) is defined by:
-
+### Énergie et relation d’entropie du modèle 1D
+L’énergie associée au système est donnée par :
 ```math
-\[
-E = A \left( \frac{u_x^2}{2} + \frac{1}{\rho} P(A, x) \right) - \tilde{P},
-\]
+E(t, x) = \frac{A u_x^2}{2} + \frac{1}{\rho} A P(A, x) - \frac{\beta(x)}{3 \rho A_0(x)} A^{3/2}
 ```
 
-where \( \tilde{P} \) is such that \( \tilde{P}'(A) = A P'(A) \).
-
-The entropy pair \((E, E + \tilde{P})\) satisfies the following entropy relation:
-
+La relation d’entropie vérifiée par cette énergie est :
 ```math
-\[
-\partial_t E + \partial_x \left( \left( E + \tilde{P} \right) u_x \right) = 3 \nu A (\partial_x u_x)^2 + \frac{2 \pi R k}{1 - R k / (4 \nu)} u_x^2 \leq 0.
-\]
+∂_t E + ∂_x \left( \left( E + \frac{\beta(x)}{3 \rho A_0(x)} A^{3/2} \right) u_x \right) = ∂_x \left( 3 \nu A ∂_x \left( \frac{Q}{A} \right) \right) u_x + \frac{2 \pi R k}{1 - R k / 4 \nu} u_x^2 ≤ 0
 ```
 
-This shows that the total energy decreases over time, accounting for viscous dissipation and friction effects.
+Sous des conditions aux limites nulles :
+```math
+∂_t \left( \int_0^L E \, dx \right) = - 3 \nu \int_0^L A (∂_x u_x)^2 \, dx - \frac{2 \pi R k}{1 - R k / 4 \nu} \int_0^L u_x^2 \, dx < 0
+```
 
 ---
 
-### 2D Blood Flow Model
+## Modèle 2D
+Le modèle 2D est dérivé à partir d’une **intégration radiale des équations de Navier-Stokes**, permettant de mieux représenter les effets locaux dans des configurations géométriques complexes, comme les **bifurcations artérielles** et les **anévrismes sévères**.
 
-#### Model Assumptions (2D)
+### Hypothèses et simplifications
+- L’écoulement est supposé **incompressible**.
+- La géométrie de l’artère est décrite à l’aide d’un système de coordonnées curvilignes (\( s, 	heta \)).
+- Le profil de vitesse est obtenu sans recourir à un ansatz spécifique.
 
-1. **H1**: Thin wall and plane stresses — the vessel wall thickness is assumed constant and sufficiently thin to allow a shell-type representation.
-2. **H2**: Radial displacement — displacements of the artery occur only in the radial direction.
-3. **H3**: Small deformation gradients and linear elastic behavior — the artery wall behaves as a linear elastic solid.
-4. **H4**: Incompressibility — the artery wall tissue is incompressible.
-5. **H5**: Dominance of circumferential stresses — stresses acting in the axial direction can be neglected compared to those in the circumferential direction.
-
-#### Asymptotic Analysis (2D)
-
-Under the **thin-artery assumption** (small ratio between the radius and length), an asymptotic expansion of the Navier-Stokes equations was performed to first order in terms of a parameter \( \epsilon \). This leads to a radially averaged two-dimensional model while neglecting higher-order terms in \( \epsilon \).
-
-The dimensional equations are rewritten in non-dimensional form using appropriately scaled variables:
-
-- Time: \( \tilde{t} = \frac{t}{T} \)
-- Space: \( \tilde{s}, \tilde{r}, \tilde{\theta} \)
-- Pressure: \( \tilde{p} \)
-- Velocity: \( \tilde{u}_s, \tilde{u}_r, \tilde{u}_\theta \)
-
-#### 2D Model Equations
-
-The radially averaged two-dimensional system is given by:
-
+### Équations principales
+1. **Conservation de la masse** :
 ```math
-\[
-\begin{aligned}
-& \partial_t A + \partial_\theta \left( \frac{Q_{R\theta}}{A} \right) + \partial_s(Q_s) = 0, \\
-& \partial_t (Q_{R\theta}) + \partial_\theta \left( \frac{Q_{R\theta}^2}{2A^2} + Ap \right) + \partial_s \left( \frac{Q_{R\theta}Q_s}{A} \right) = \frac{2R}{3} C \sin \theta \frac{Q_s^2}{A} + \frac{2Rk Q_{R\theta}}{A} + \partial_\theta Ap, \\
-& \partial_t (Q_s) + \partial_\theta \left( \frac{Q_s Q_{R\theta}}{A^2} \right) + \partial_s \left( \frac{Q_s^2}{A} - \frac{Q_{R\theta}^2}{2A^2} + Ap \right) = - \frac{2R}{3} C \sin \theta \frac{Q_s Q_{R\theta}}{A^2} + \frac{kR Q_s}{A} + \partial_s Ap, \\
-& p = p_{\text{ext}} + b \frac{R - R_0}{R_0^2}.
-\end{aligned}
-\]
+∂_t A + ∂_θ \left( \frac{Q_{Rθ}}{A} \right) + ∂_s(Q_s) = 0
 ```
 
-#### Energy Consistency Theorem (2D)
-
-Let \((A, u_\theta, u_s)\) be a smooth solution of the 2D system. The total energy \( E \) is defined as:
-
+2. **Conservation de la quantité de mouvement (composante radiale et axiale)** :
 ```math
-\[
-E = A \left( \psi + p \right) - \tilde{p},
-\]
+∂_t (Q_{Rθ}) + ∂_θ \left( \frac{Q_{Rθ}^2}{2 A^2} + A P \right) + ∂_s \left( \frac{Q_{Rθ} Q_s}{A} \right) = \frac{2 R}{3} C \sin θ \frac{Q_s^2}{A} + \frac{2 R k Q_{Rθ}}{A} + ∂_θ (A P)
+```
+```math
+∂_t (Q_s) + ∂_θ \left( \frac{Q_s Q_{Rθ}}{A^2} \right) + ∂_s \left( \frac{Q_s^2}{A} - \frac{Q_{Rθ}^2}{2 A^2} + A P \right) = - \frac{2 R}{3} C \sin θ \frac{Q_{Rθ} Q_s}{A^2} + \frac{k R Q_s}{A} + ∂_s (A P)
 ```
 
-where \( \psi = \frac{9}{16} u_\theta^2 + \frac{1}{2} u_s^2 \) is the total head, and \( \tilde{p} \) is such that \( \tilde{p}'(A) = A p'(A) \).
-
-The entropy pair \((E, E + \tilde{p})\) satisfies the following entropy relation:
-
+### Énergie et relation d’entropie du modèle 2D
+L’énergie associée au système est donnée par :
 ```math
-\[
-\partial_t E + \nabla_{\theta, s} \cdot \left( \begin{bmatrix}
-\frac{3}{2} \frac{u_\theta}{R} \\
-u_s
-\end{bmatrix} (E + \tilde{p} - \frac{9}{16} A u_\theta^2) \right) = \frac{9}{4} R k u_\theta^2 + k R u_s^2.
-\]
+E(t, θ, s) = A \left( \frac{9}{8} u_θ^2 + \frac{u_s^2}{2} + p \right) - p̃
 ```
 
-This relation shows that the total energy of the system decreases over time, accounting for friction effects (terms in \( k \)).
+La relation d’entropie correspondante est :
+```math
+∂_t E + ∂_θ \left( \frac{3}{2} \frac{u_θ}{R} \left( E + p̃ - \frac{9}{16} A u_θ^2 \right) \right) + ∂_s \left( u_s \left( E + p̃ - \frac{9}{16} A u_θ^2 \right) \right) = \frac{9}{4} R k u_θ^2 + k R u_s^2 ≤ 0
+```
 
+Cette relation garantit que l’énergie décroît localement dans le temps, ce qui assure la **stabilité** du modèle.
+
+---
+
+## Comparaison des modèles 1D et 2D
+- **Modèle 1D** :
+  - Rapide et efficace pour des simulations globales sur de grands réseaux artériels.
+  - Bien adapté pour des géométries simples ou faiblement courbées.
+  - Coût de calcul très faible.
+- **Modèle 2D** :
+  - Plus précis pour des géométries complexes (bifurcations, anévrismes).
+  - Permet de mieux capturer les effets locaux et les interactions fluide-structure.
+  - Coût de calcul modéré par rapport aux modèles tridimensionnels (NS-FSI 3D).
+
+L’utilisation combinée de ces deux modèles permet une **alternative efficace aux simulations 3D**, tout en offrant un bon compromis entre précision et coût de calcul.
