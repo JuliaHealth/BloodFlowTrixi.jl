@@ -69,7 +69,7 @@ function boundary_condition_pressure_in(u_inner, normal,
             u_inner[4],
             u_inner[5]
         )
-            flux = surface_flux_function(u_boundary,u_inner, normal,
+            flux = surface_flux_function(u_inner,u_boundary, normal,
             eq)
         return flux
     end
