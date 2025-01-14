@@ -56,10 +56,10 @@ Le modèle 2D est dérivé à partir d’une **intégration radiale des équatio
 
 2. **Conservation de la quantité de mouvement (composante radiale et axiale)** :
 ```math
-∂_t (Q_{Rθ}) + ∂_θ \left( \frac{Q_{Rθ}^2}{2 A^2} + A P \right) + ∂_s \left( \frac{Q_{Rθ} Q_s}{A} \right) = \frac{2 R}{3} C \sin θ \frac{Q_s^2}{A} + \frac{2 R k Q_{Rθ}}{A} + ∂_θ (A P)
+∂_t (Q_{Rθ}) + ∂_θ \left( \frac{Q_{Rθ}^2}{2 A^2} + A P \right) + ∂_s \left( \frac{Q_{Rθ} Q_s}{A} \right) = \frac{2 R}{3} C \sin θ \frac{Q_s^2}{A} + \frac{2 R k Q_{Rθ}}{A} + P∂_θ (A)
 ```
 ```math
-∂_t (Q_s) + ∂_θ \left( \frac{Q_s Q_{Rθ}}{A^2} \right) + ∂_s \left( \frac{Q_s^2}{A} - \frac{Q_{Rθ}^2}{2 A^2} + A P \right) = - \frac{2 R}{3} C \sin θ \frac{Q_{Rθ} Q_s}{A^2} + \frac{k R Q_s}{A} + ∂_s (A P)
+∂_t (Q_s) + ∂_θ \left( \frac{Q_s Q_{Rθ}}{A^2} \right) + ∂_s \left( \frac{Q_s^2}{A} - \frac{Q_{Rθ}^2}{2 A^2} + A P \right) = - \frac{2 R}{3} C \sin θ \frac{Q_{Rθ} Q_s}{A^2} + \frac{k R Q_s}{A} + P∂_s (A)
 ```
 
 ### Énergie et relation d’entropie du modèle 2D
