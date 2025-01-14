@@ -2,22 +2,20 @@ using Trixi
 using .BloodFlowTrixi
 using OrdinaryDiffEq
 
-eq = BloodFlowEquations1D(; h = 0.1)
-eq_ord2 = BloodFlowEquations1DOrd2(0.04,eq)
+eq = BloodFlowEquations2D(; h = 0.1)
 
-mesh = TreeMesh(0.0, 40.0, 
-    initial_refinement_level = 4, 
-    n_cells_max = 10^4, 
-    periodicity = false)
-
-bc_hypo = (;
-    x_neg = boundary_condition_pressure_in,
-    x_pos = Trixi.BoundaryConditionDoNothing()
+mesh = P4estMesh(
+    (2,4),
+    polydeg = 2,
+    periodicity = (true,false),
+    coordinates_min = (0.0,0.0),
+    coordinates_max = (2*pi,40.0),
+    initial_refinement_level = 4
 )
 
-bc_parab = (;
-x_neg = boundary_condition_pressure_in,
-x_pos = Trixi.BoundaryConditionDoNothing()
+bc = Dict(
+    :y_neg => boundary_condition_pressure_in,
+    :y_pos => Trixi.BoundaryConditionDoNothing()
 )
 
 solver = DGSEM(polydeg = 2,
@@ -25,13 +23,13 @@ solver = DGSEM(polydeg = 2,
     volume_integral = VolumeIntegralFluxDifferencing((flux_lax_friedrichs,flux_nonconservative))
     )
 
-semi = SemidiscretizationHyperbolicParabolic(
+semi = SemidiscretizationHyperbolic(
     mesh,
-    (eq,eq_ord2),
+    eq,
     initial_condition_simple,
-    source_terms = source_term_simple_ord2,
+    source_terms = source_term_simple,
     solver,
-    boundary_conditions = (bc_hypo,bc_parab)
+    boundary_conditions = bc
 )
 
 tspan = (0.0, 0.3)
