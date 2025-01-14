@@ -2,9 +2,7 @@ struct BloodFlowEquations1DOrd2{T <:Real,E} <: Trixi.AbstractEquationsParabolic{
     nu ::T
     model1d ::E
 end
-Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations1DOrd2) = ("a","Q","E","A0")
-
-Trixi.have_nonconservative_terms(::BloodFlowEquations1DOrd2) = Trixi.True()
+Trixi.varnames(mapin,eq::BloodFlowTrixi.BloodFlowEquations1DOrd2) = Trixi.varnames(mapin,eq.model1d)
 
 function Trixi.flux(u,gradients,orientation::Int,eq_parab ::BloodFlowEquations1DOrd2)
     dudx = gradients
@@ -12,10 +10,6 @@ function Trixi.flux(u,gradients,orientation::Int,eq_parab ::BloodFlowEquations1D
     A = a+A0
     val = 3*eq_parab.nu * (-(dudx[1] + dudx[4])*Q/A + dudx[2])
     return SVector(0.0,val,0,0)
-end
-
-function flux_nonconservative(u_ll,u_rr,orientation::Integer,eq::BloodFlowEquations1DOrd2)
-    return SVector(zero(T),0,0,0)
 end
 
 function source_term_simple(u, x, t, eq::BloodFlowEquations1DOrd2)
