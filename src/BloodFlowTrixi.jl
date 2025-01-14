@@ -18,5 +18,5 @@ module BloodFlowTrixi
     include("1DModel/1dmodel.jl")
     include("2DModel/2dmodel.jl")
 
-    export BloodFlowEquations1D, BloodFlowEquations2D,flux_nonconservative,source_term_simple,boundary_condition_pressure_in,initial_condition_simple,friction,pressure,radius,boundary_condition_outflow,boundary_condition_slip_wall
+    export BloodFlowEquations1D,BloodFlowEquations1DOrd2, BloodFlowEquations2D,flux_nonconservative,source_term_simple,source_term_simple_ord2,boundary_condition_pressure_in,initial_condition_simple,friction,pressure,radius,boundary_condition_outflow,boundary_condition_slip_wall
 end
