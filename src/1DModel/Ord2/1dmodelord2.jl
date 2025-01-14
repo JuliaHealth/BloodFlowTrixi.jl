@@ -12,10 +12,10 @@ function Trixi.flux(u,gradients,orientation::Int,eq_parab ::BloodFlowEquations1D
     return SVector(0.0,val,0,0)
 end
 
-function source_term_simple(u, x, t, eq::BloodFlowEquations1DOrd2)
-    res = source_term_simple(u, x, t, eq.model1d)
-    k = friction(u,x,eq.model1d)
-    R = radius(u,eq.model1d)
+function source_term_simple_ord2(u, x, t, eq::BloodFlowEquations1D)
+    res = source_term_simple(u, x, t, eq)
+    k = friction(u,x,eq)
+    R = radius(u,eq)
     return SVector(res[1],res[2]/(1-R*k/(4*eq.nu)),res[3],res[4])
 end
 
