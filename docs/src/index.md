@@ -53,7 +53,7 @@ To install **BloodFlowTrixi.jl**, use the following commands in Julia:
 ```bash
 julia> ]
 pkg> add Trixi
-pkg> add https://github.com/your-repo/BloodFlowTrixi.jl
+pkg> add BloodFlowTrixi
 ```
 
 ## Future Plans
