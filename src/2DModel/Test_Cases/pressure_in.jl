@@ -17,7 +17,7 @@ function initial_condition_simple(x, t, eq::BloodFlowEquations2D; R0=2.0)
     A0 = T(R0^2 / 2)
     QRθ = T(0.0)
     Qs = T(0.0)
-    E = T(1e7)
+    E = T(1e7) 
     return SVector(zero(T), QRθ, Qs, E, A0)
 end
 

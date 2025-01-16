@@ -1,5 +1,4 @@
 struct BloodFlowEquations1DOrd2{T <:Real,E} <: Trixi.AbstractEquationsParabolic{1, 4, GradientVariablesConservative}
-    nu ::T
     model1d ::E
 end
 Trixi.varnames(mapin,eq::BloodFlowTrixi.BloodFlowEquations1DOrd2) = Trixi.varnames(mapin,eq.model1d)
@@ -8,7 +7,7 @@ function Trixi.flux(u,gradients,orientation::Int,eq_parab ::BloodFlowEquations1D
     dudx = gradients
     a,Q,_,A0 = u
     A = a+A0
-    val = 3*eq_parab.nu * (-(dudx[1] + dudx[4])*Q/A + dudx[2])
+    val = 3*eq_parab.model1d.nu * (-(dudx[1] + dudx[4])*Q/A + dudx[2])
     return SVector(0.0,val,0,0)
 end
 
