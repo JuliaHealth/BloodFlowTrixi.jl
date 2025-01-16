@@ -7,7 +7,7 @@ function Trixi.flux(u,gradients,orientation::Int,eq_parab ::BloodFlowEquations1D
     dudx = gradients
     a,Q,_,A0 = u
     A = a+A0
-    val = 3*eq_parab.model1d.nu * (-(dudx[1] + dudx[4])*Q/A + dudx[2])
+    val = -3*eq_parab.model1d.nu * (-(dudx[1] + dudx[4])*Q/A + dudx[2])
     return SVector(0.0,val,0,0)
 end
 
@@ -35,7 +35,7 @@ end
 # Dirichlet and Neumann boundary conditions for use with parabolic solvers in weak form.
 # Note that these are general, so they apply to LaplaceDiffusion in any spatial dimension.
 @inline function (boundary_condition::Trixi.BoundaryConditionDirichlet)(flux_inner, u_inner,
-    normal::AbstractVector,
+    orientation_or_normal,direction,
     x, t,
     operator_type::Trixi.Gradient,
     equations_parabolic::BloodFlowEquations1DOrd2)
@@ -43,7 +43,7 @@ return boundary_condition.boundary_value_function(x, t, equations_parabolic)
 end
 
 @inline function (boundary_condition::Trixi.BoundaryConditionDirichlet)(flux_inner, u_inner,
-    normal::AbstractVector,
+    orientation_or_normal,direction,
     x, t,
     operator_type::Trixi.Divergence,
     equations_parabolic::BloodFlowEquations1DOrd2)
@@ -51,7 +51,7 @@ return flux_inner
 end
 
 @inline function (boundary_condition::Trixi.BoundaryConditionNeumann)(flux_inner, u_inner,
-  normal::AbstractVector,
+  orientation_or_normal,direction,
   x, t,
   operator_type::Trixi.Divergence,
   equations_parabolic::BloodFlowEquations1DOrd2)
@@ -59,7 +59,7 @@ return boundary_condition.boundary_normal_flux_function(x, t, equations_paraboli
 end
 
 @inline function (boundary_condition::Trixi.BoundaryConditionNeumann)(flux_inner, u_inner,
-  normal::AbstractVector,
+  orientation_or_normal,direction,
   x, t,
   operator_type::Trixi.Gradient,
   equations_parabolic::BloodFlowEquations1DOrd2)

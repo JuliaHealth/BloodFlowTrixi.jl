@@ -16,8 +16,8 @@ bc_hypo = (;
 )
 
 bc_parab = (;
-x_neg = boundary_condition_pressure_in,
-x_pos = Trixi.BoundaryConditionDoNothing()
+    x_neg = BoundaryConditionNeumann((x,t,eq) -> SVector(0.0,0,0,0,0)),
+    x_pos = BoundaryConditionNeumann((x,t,eq) -> SVector(0.0,0,0,0,0))
 )
 
 solver = DGSEM(polydeg = 2,
