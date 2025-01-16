@@ -2,7 +2,7 @@
 
 julia_version = "1.11.2"
 manifest_format = "2.0"
-project_hash = "2085121fe291c3fd81a46cf5637ef065eabc2c93"
+project_hash = "c96a514a6457748a0fd5a585751b20c3f87d832e"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "016833eb52ba2d6bea9fcb50ca295980e728ee24"
@@ -129,12 +129,6 @@ deps = ["Static"]
 git-tree-sha1 = "f21cfd4950cb9f0587d5067e69405ad2acd27b87"
 uuid = "62783981-4cbd-42fc-bca8-16325de8dc4b"
 version = "0.1.6"
-
-[[deps.BloodFlowTrixi]]
-deps = ["Trixi"]
-git-tree-sha1 = "dff2870f8442cdd7a185957d7843ef7c0888aa1c"
-uuid = "7b46d5ad-635f-4b66-9393-904f183e39b5"
-version = "0.0.4"
 
 [[deps.CEnum]]
 git-tree-sha1 = "389ad5c84de1ae7cf0e28e381131c98ea87d54fc"
