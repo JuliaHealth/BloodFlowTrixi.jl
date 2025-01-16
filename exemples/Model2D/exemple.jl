@@ -1,5 +1,5 @@
 using Trixi
-using .BloodFlowTrixi
+using BloodFlowTrixi
 using OrdinaryDiffEq
 
 eq = BloodFlowEquations2D(; h = 0.1)

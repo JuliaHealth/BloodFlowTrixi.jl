@@ -1,9 +1,9 @@
 using Trixi
-using .BloodFlowTrixi
+using BloodFlowTrixi
 using OrdinaryDiffEq
 
 eq = BloodFlowEquations1D(; h = 0.1)
-eq_ord2 = BloodFlowEquations1DOrd2(0.04,eq)
+eq_ord2 = BloodFlowEquations1DOrd2(eq)
 
 mesh = TreeMesh(0.0, 40.0, 
     initial_refinement_level = 4, 

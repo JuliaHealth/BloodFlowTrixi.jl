@@ -1,4 +1,4 @@
-struct BloodFlowEquations1DOrd2{T <:Real,E} <: Trixi.AbstractEquationsParabolic{1, 4, GradientVariablesConservative}
+struct BloodFlowEquations1DOrd2{E} <: Trixi.AbstractEquationsParabolic{1, 4, GradientVariablesConservative}
     model1d ::E
 end
 Trixi.varnames(mapin,eq::BloodFlowTrixi.BloodFlowEquations1DOrd2) = Trixi.varnames(mapin,eq.model1d)
