@@ -12,11 +12,11 @@ Docs under https://yolhan83.github.io/BloodFlowTrixi.jl
 $(isnothing(get(ENV, "CI", nothing)) ? ("\n" * "Package local path: " * pathof(BloodFlowTrixi)) : "") 
 """
 module BloodFlowTrixi
-    using Trixi
+    using Trixi,WriteVTK
     # Write your package code here.
     abstract type AbstractBloodFlowEquations{NDIMS, NVARS} <:Trixi.AbstractEquations{NDIMS, NVARS} end
     include("1DModel/1dmodel.jl")
     include("2DModel/2dmodel.jl")
 
-    export BloodFlowEquations1D,BloodFlowEquations1DOrd2, BloodFlowEquations2D,flux_nonconservative,source_term_simple,source_term_simple_ord2,boundary_condition_pressure_in,initial_condition_simple,friction,pressure,radius,boundary_condition_outflow,boundary_condition_slip_wall
+    export BloodFlowEquations1D,BloodFlowEquations1DOrd2, BloodFlowEquations2D,flux_nonconservative,source_term_simple,source_term_simple_ord2,boundary_condition_pressure_in,initial_condition_simple,friction,pressure,radius,boundary_condition_outflow,boundary_condition_slip_wall,get3DData
 end

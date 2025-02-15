@@ -5,7 +5,9 @@ version = "0.0.6"
 
 [deps]
 Trixi = "a7f1ee26-1774-49b1-8366-f1abc58fbfcb"
+WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [compat]
 Trixi = "^0.9.13"
+WriteVTK = "1.21.1"
 julia = "^1.10"
