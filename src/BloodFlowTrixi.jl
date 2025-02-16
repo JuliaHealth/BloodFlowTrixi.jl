@@ -12,7 +12,7 @@ Docs under https://yolhan83.github.io/BloodFlowTrixi.jl
 $(isnothing(get(ENV, "CI", nothing)) ? ("\n" * "Package local path: " * pathof(BloodFlowTrixi)) : "") 
 """
 module BloodFlowTrixi
-    using Trixi,WriteVTK
+    using Trixi,WriteVTK,StaticArrays
     # Write your package code here.
     abstract type AbstractBloodFlowEquations{NDIMS, NVARS} <:Trixi.AbstractEquations{NDIMS, NVARS} end
     include("1DModel/1dmodel.jl")

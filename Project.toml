@@ -4,10 +4,12 @@ authors = ["yolhan83 <yolhan@laposte.net>"]
 version = "0.0.9"
 
 [deps]
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Trixi = "a7f1ee26-1774-49b1-8366-f1abc58fbfcb"
 WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [compat]
+StaticArrays = "^1.9"
 Trixi = "^0.10"
 WriteVTK = "^1.21"
 julia = "^1.10"
