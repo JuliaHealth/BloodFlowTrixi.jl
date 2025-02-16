@@ -524,8 +524,6 @@ end
 
 In this section, we describe how to reconstruct **3D data** from 1D and 2D blood flow simulations using **BloodFlowTrixi.jl**. This allows us to visualize the reconstructed vessel in a three-dimensional space and export the data for further analysis.
 
----
-
 ### Overview
 
 The reconstruction functions take the simulation results from **1D** and **2D** blood flow models and generate **3D representations**. These representations are computed based on:
@@ -535,9 +533,6 @@ The reconstruction functions take the simulation results from **1D** and **2D** 
 - Pressure variations along the vessel.
 
 The output can be stored in **VTK format**, which allows for visualization with **ParaView** or similar tools.
-
----
-
 ### Reconstruction from 1D Model
 
 For the **1D case**, we assume the vessel follows a straight or predefined curve in 3D space. The reconstructed shape is obtained by rotating the cross-sectional area around a centerline.
@@ -557,8 +552,7 @@ end
 ```
 
 This script reconstructs the 3D vessel for each time step of the solution and saves the results in **VTK format**.
-
----
+![Alt Text](./pressure_3d.gif)
 
 ### Reconstruction from 2D Model
 
@@ -587,8 +581,7 @@ end
 ```
 
 This script reconstructs the 3D vessel geometry using a predefined **curved centerline** and associated **tangent, normal, and binormal vectors**.
-
----
+![Alt Text](./pressure_curve_3d.gif)
 
 ### Visualization
 
@@ -599,10 +592,10 @@ Once the VTK files are generated, you can open them in **ParaView**:
 
 You can apply filters like **Clip**, **Slice**, and **Glyph** to inspect different regions of the simulation.
 
----
-
 ### Summary
 
 - **1D reconstruction** assumes a straight centerline and rotates the cross-section to create a 3D vessel.
 - **2D reconstruction** follows a predefined curved centerline with tangent and normal vectors.
 - **VTK output** enables advanced visualization using **ParaView** or similar tools.
+
+
