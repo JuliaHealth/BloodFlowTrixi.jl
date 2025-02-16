@@ -98,12 +98,13 @@ function boundary_condition_pressure_in(u_inner, orientation_or_normal, directio
     )
     # Calculate the boundary flux
     if iseven(direction) # u_inner is "left" of boundary, u_boundary is "right" of boundary
-        flux = surface_flux_function(u_inner, u_boundary, orientation_or_normal, eq)
+        flux1 = surface_flux_function[1](u_inner, u_boundary, orientation_or_normal, eq)
+        flux2 = surface_flux_function[2](u_inner, u_boundary, orientation_or_normal, eq)
     else # u_boundary is "left" of boundary, u_inner is "right" of boundary
-        flux = surface_flux_function(u_boundary, u_inner, orientation_or_normal, eq)
+        flux1 = surface_flux_function[1](u_boundary, u_inner, orientation_or_normal, eq)
+        flux2 = surface_flux_function[2](u_boundary, u_inner, orientation_or_normal, eq)
     end
-
-    return flux
+    return flux1,flux2
 end
 
 
@@ -135,6 +136,7 @@ function boundary_condition_pressure_in(u_inner, normal, x, t, surface_flux_func
         u_inner[4],
         u_inner[5]
     )
-    flux = surface_flux_function(u_inner, u_boundary, normal, eq)
-    return flux
+    flux1 = surface_flux_function[1](u_inner, u_boundary, normal, eq)
+    flux2 = surface_flux_function[2](u_inner, u_boundary, normal, eq)
+    return flux1,flux2
 end
