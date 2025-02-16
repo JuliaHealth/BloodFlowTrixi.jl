@@ -1,6 +1,7 @@
 @doc raw"""
-Generates 3D spatial data from a 1D blood flow model for visualization.
+    get3DData(eq::BloodFlowEquations1D,semi,sol,time_index ::Int = 1;theta_disc ::Int = 32,vtk ::Bool=false,out ::T="./datas") where T<:AbstractString
 
+Generates 3D spatial data from a 1D blood flow model for visualization.
 This function extracts unique node coordinates, computes relevant flow parameters,
 and generates a 3D representation of the arterial domain using cylindrical coordinates.
 Optionally, it can export the data in VTK format.

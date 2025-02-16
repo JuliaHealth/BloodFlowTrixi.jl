@@ -1,6 +1,7 @@
 @doc raw"""
-Generates 3D spatial data from a 2D blood flow model for visualization.
+     get3DData(eq::BloodFlowEquations2D,curve::F1,er::F2,semi,sol,time_index ::Int = 1;vtk ::Bool=false,out ::T="./datas") where {T<:AbstractString,F1<:Function,F2<:Function}
 
+Generates 3D spatial data from a 2D blood flow model for visualization.
 This function extracts unique node coordinates, computes relevant flow parameters,
 and generates a 3D representation of the arterial domain using cylindrical coordinates.
 Optionally, it can export the data in VTK format.
@@ -88,8 +89,9 @@ end
 
 
 @doc raw"""
-Generates 3D spatial data from a 2D blood flow model for visualization.
+    get3DData(eq::BloodFlowEquations2D,curve::F1,tanj::F2,nor::F3,semi,sol,time_index ::Int = 1;vtk ::Bool=false,out ::T="./datas") where {T<:AbstractString,F1<:Function,F2<:Function,F3<:Function}
 
+Generates 3D spatial data from a 2D blood flow model for visualization.
 This function extracts unique node coordinates, computes relevant flow parameters,
 and generates a 3D representation of the arterial domain using cylindrical coordinates.
 Optionally, it can export the data in VTK format.
