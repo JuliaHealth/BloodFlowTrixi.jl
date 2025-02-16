@@ -519,3 +519,90 @@ end
 ```
 
 ![Alt Text](./graph2d.gif)
+
+## Reconstruction of 3D datas
+
+In this section, we describe how to reconstruct **3D data** from 1D and 2D blood flow simulations using **BloodFlowTrixi.jl**. This allows us to visualize the reconstructed vessel in a three-dimensional space and export the data for further analysis.
+
+---
+
+### Overview
+
+The reconstruction functions take the simulation results from **1D** and **2D** blood flow models and generate **3D representations**. These representations are computed based on:
+- The spatial position of the computational grid points.
+- The computed area perturbation and reference area, used to determine the local vessel radius.
+- Flow velocity components projected onto the 3D geometry.
+- Pressure variations along the vessel.
+
+The output can be stored in **VTK format**, which allows for visualization with **ParaView** or similar tools.
+
+---
+
+### Reconstruction from 1D Model
+
+For the **1D case**, we assume the vessel follows a straight or predefined curve in 3D space. The reconstructed shape is obtained by rotating the cross-sectional area around a centerline.
+
+#### Example Usage
+
+```julia
+out = "datas/"
+if isdir(out)
+    rm(out, recursive=true)  
+    mkdir(out)  
+end
+
+for i in eachindex(sol)
+    datas = get3DData(eq, semi, sol, i, vtk=true, out=out)
+end
+```
+
+This script reconstructs the 3D vessel for each time step of the solution and saves the results in **VTK format**.
+
+---
+
+### Reconstruction from 2D Model
+
+For the **2D case**, the vessel can follow a more complex curved path. The reconstruction uses:
+- **A centerline function** `curve(s)`, which gives the position of the vessel as a function of the axial coordinate.
+- **A normal vector function** `nor(s)`, which defines the local orientation of the vessel.
+- **A binormal function** to complete the 3D frame.
+- **A radius function**, which computes the local vessel radius from the area values.
+
+#### Example Usage
+
+```julia
+out = "datas/"
+if isdir(out)
+    rm(out, recursive=true)  
+    mkdir(out)  
+end
+
+curve(s) = SA[s/40, cospi(s/40), sinpi(s/40)] / sqrt(1/40^2 + (pi/40)^2)
+tanj(s) = SA[1/40, -pi/40*sinpi(s/40), pi/40*cospi(s/40)] / sqrt(1/40^2 + (pi/40)^2)
+nor(s) = SA[0, -cospi(s/40), -sinpi(s/40)]
+
+for i in eachindex(sol)
+    datas = get3DData(eq, curve, tanj, nor, semi, sol, i, vtk=true, out=out)
+end
+```
+
+This script reconstructs the 3D vessel geometry using a predefined **curved centerline** and associated **tangent, normal, and binormal vectors**.
+
+---
+
+### Visualization
+
+Once the VTK files are generated, you can open them in **ParaView**:
+1. Open **ParaView**.
+2. Click **File > Open**, navigate to your `datas/` folder, and select a `.vtu` file.
+3. Click **Apply** to visualize the reconstructed 3D vessel.
+
+You can apply filters like **Clip**, **Slice**, and **Glyph** to inspect different regions of the simulation.
+
+---
+
+### Summary
+
+- **1D reconstruction** assumes a straight centerline and rotates the cross-section to create a 3D vessel.
+- **2D reconstruction** follows a predefined curved centerline with tangent and normal vectors.
+- **VTK output** enables advanced visualization using **ParaView** or similar tools.
