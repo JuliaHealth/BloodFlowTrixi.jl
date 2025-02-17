@@ -151,10 +151,10 @@ function get3DData(eq::BloodFlowEquations2D,curve::F1,tanj::F2,nor::F3,semi,sol,
         thvali = thetaval[i]
         svali = sval[i]
         Avali = aval[i] + A0val[i]
-        wthetavali =Qthval[i]/Avali 
+        Rvali = sqrt(2*Avali)
+        wthetavali = Typ(4/3*(Qthval[i]/Rvali)/Avali) #     wθ = (4 / 3 * QRθ / R) / A
         wsvali = Qsval[i]/Avali 
         Pvali = Pval[i]
-        Rvali = sqrt(2*Avali)
         # for thetaj in theta
         xi,yi,zi = M(thvali,svali,Rvali)
         x[c] = xi
