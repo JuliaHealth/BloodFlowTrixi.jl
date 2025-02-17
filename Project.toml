@@ -1,7 +1,7 @@
 name = "BloodFlowTrixi"
 uuid = "7b46d5ad-635f-4b66-9393-904f183e39b5"
 authors = ["yolhan83 <yolhan@laposte.net>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
