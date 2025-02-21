@@ -5,8 +5,8 @@ using OrdinaryDiffEq
 eq = BloodFlowEquations2D(; h = 0.1)
 
 mesh = P4estMesh(
-    (2,4),
-    polydeg = 2,
+    (1,2),
+    polydeg = 1,
     periodicity = (true,false),
     coordinates_min = (0.0,0.0),
     coordinates_max = (2*pi,40.0),
@@ -18,7 +18,7 @@ bc = Dict(
     :y_pos => Trixi.BoundaryConditionDoNothing()
 )
 
-solver = DGSEM(polydeg = 2,
+solver = DGSEM(polydeg = 1,
     surface_flux = (flux_lax_friedrichs,flux_nonconservative),
     volume_integral = VolumeIntegralFluxDifferencing((flux_lax_friedrichs,flux_nonconservative))
     )

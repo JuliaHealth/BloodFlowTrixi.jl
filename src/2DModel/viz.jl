@@ -141,10 +141,10 @@ Named tuple containing:
 - `ws`: Flow axial velocity at each point.
 
 """
-function get3DData(eq::BloodFlowEquations2D,semi,sol,time_index ::Int = 1;vtk ::Bool=false,out ::T="./datas") where {T<:AbstractString,F1<:Function,F2<:Function,F3<:Function}
-    curve(s) = [s,0.0,0.0]
-    tanj(s) = [1.0,0.0,0.0]
-    nor(s) = [0.0,1.0,0.0]
+function get3DData(eq::BloodFlowEquations2D,semi,sol,time_index ::Int = 1;vtk ::Bool=false,out ::T="./datas") where {T<:AbstractString}
+    curve(s) = SA[s,0.0,0.0]
+    tanj(s) = SA[1.0,0.0,0.0]
+    nor(s) = SA[0.0,1.0,0.0]
     ∧(v,w) = SA[v[2]*w[3]-v[3]*w[2],v[3]*w[1]-v[1]*w[3],v[1]*w[2]-v[2]*w[1]]
     er(theta,s) = cos(theta).*nor(s) .+ sin(theta).*∧(tanj(s),nor(s))
     return get3DData(eq,curve,er,semi,sol,time_index;vtk=vtk,out=out)
