@@ -57,6 +57,12 @@ pkg> add Trixi
 pkg> add BloodFlowTrixi
 ```
 
+# Simulations
+![Alt Text](./docs/src/graph.gif)
+![Alt Text](./docs/src/graph2d.gif)
+![Alt Text](./docs/src/pressure_3d.gif)
+![Alt Text](./docs/src/pressure_curve_3d.gif)
+
 ## Future Plans
 
 **short term**
