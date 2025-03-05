@@ -6,7 +6,6 @@ The 1D model is based on a **cross-sectional integration of the Navier-Stokes eq
 ### Assumptions and Simplifications
 - The flow is considered **incompressible**.
 - The artery is modeled as a cylindrical tube with a cross-section varying with pressure.
-- A parabolic velocity profile is assumed, enabling **averaging** over the artery's cross-section.
 
 ### Main Equations
 The derived equations form a system of **hyperbolic partial differential equations** describing mass and momentum conservation:
