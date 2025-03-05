@@ -8,7 +8,7 @@ makedocs(;
     authors="yolhan83 <yolhan@laposte.net>",
     sitename="BloodFlowTrixi.jl",
     format=Documenter.HTML(;
-        canonical="https://yolhan83.github.io/BloodFlowTrixi.jl",
+        canonical="https://github.com/JuliaHealth/BloodFlowTrixi.jl",
         edit_link="master",
         assets=String[],
     ),
@@ -20,6 +20,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/yolhan83/BloodFlowTrixi.jl",
+    repo="github.com/JuliaHealth/BloodFlowTrixi.jl",
     devbranch="master",
 )
