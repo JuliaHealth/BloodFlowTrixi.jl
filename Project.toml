@@ -19,7 +19,7 @@ BloodFlowTrixiDataInterpolationsExt = "DataInterpolations"
 [compat]
 DataInterpolations = "8.0"
 ForwardDiff = "0.10"
-LinearAlgebra = "1.11"
+LinearAlgebra = "1.10, 1.11"
 StaticArrays = "1.9"
 Trixi = "0.10, 0.11"
 WriteVTK = "1.21"
