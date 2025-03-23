@@ -23,11 +23,11 @@ module BloodFlowTrixiDataInterpolationsExt
                 a,b,c = tanj(s)
                 # return a any normal vector
                 if a != 0
-                    res = [-b,a,c]
+                    return [-b,a,c]
                 elseif b != 0
-                    res = [-b,a,c]
+                    return [-b,a,c]
                 else
-                    res = [-c,b,a]
+                    return [-c,b,a]
                 end
             end
             return res/n
