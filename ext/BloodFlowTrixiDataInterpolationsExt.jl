@@ -19,12 +19,15 @@ module BloodFlowTrixiDataInterpolationsExt
         function nor(s) 
             res= ForwardDiff.derivative(tanj,s)
             n = norm(res)
-            if n == 0
+            if n ≈ 0
                 a,b,c = tanj(s)
-                if a != 0 && b != 0
-                    return [-b,a,c]
+                # return a any normal vector
+                if a != 0
+                    res = [-b,a,c]
+                elseif b != 0
+                    res = [-b,a,c]
                 else
-                    return [1,0,0]
+                    res = [-c,b,a]
                 end
             end
             return res/n
