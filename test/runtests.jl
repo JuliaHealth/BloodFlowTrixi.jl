@@ -1,11 +1,10 @@
 using BloodFlowTrixi
 using Test
-using Aqua
 
-@testset "BloodFlowTrixi.jl" begin
-    @testset "Code quality (Aqua.jl)" begin
-        Aqua.test_all(BloodFlowTrixi; ambiguities = false,)
-    end
+@testset "BloodFlowTrixi.jl"  begin
+    include("./Aqua/aquatest.jl")
+    include("./Extensions/DataInterpolationsTest.jl")
+
     @testset "1D Blood Flow Model" begin
         include("../exemples/Model1D/exemple.jl")
     end

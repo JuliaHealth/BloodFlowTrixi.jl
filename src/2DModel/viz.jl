@@ -37,7 +37,7 @@ function get3DData(eq::BloodFlowEquations2D,curve::F1,er::F2,semi,sol,time_index
     A0val = @view(soltime[5:5:end])
     Pval = map((a,Qth,Qs,E,A0)->BloodFlowTrixi.pressure(SA[a,Qth,Qs,E,A0],eq),aval,Qthval,Qsval,Eval,A0val)
     M(theta,s,R) = curve(s) .+ R.*er(theta,s)
-    Typ = eltype(sval)
+    Typ = eltype(er(sval[1],thetaval[1]))
     s = length(thetaval)
     x = zeros(Typ,s)
     y = zeros(Typ,s)
