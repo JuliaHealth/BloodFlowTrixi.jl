@@ -7,18 +7,25 @@ module BloodFlowTrixiDataInterpolationsExt
         using ..DataInterpolations
     end
     using StaticArrays, LinearAlgebra
-    using ForwardDiff
-    function BloodFlowTrixi.get3DData(eq::BloodFlowEquations2D,curve_data::Tuple{AbstractArray,AbstractArray},semi,sol,time_index ::Int = 1;vtk ::Bool=false,out ::T="./datas") where {T<:AbstractString}
-        s_data,xyz_data = curve_data
-        quadinterp = QuadraticSpline(xyz_data,s_data)
-        curve = SmoothArcLengthInterpolation(quadinterp;m=length(s_data),in_place=false)
+    using ForwardDiff, QuadGK
+    function BloodFlowTrixi.get3DData(eq::BloodFlowEquations2D,curve_data::AbstractArray,semi,sol,time_index ::Int = 1;vtk ::Bool=false,out ::T="./datas") where {T<:AbstractString}
+        N = length(curve_data)
+        quadinterp = QuadraticSpline(curve_data,range(0,1,N))
+        L = quadgk(s->norm(ForwardDiff.derivative(quadinterp,s)),0,1)[1]
+        s_data = range(0,L,N)
+        newinterp = CubicSpline(curve_data,s_data)
+        curve = SmoothArcLengthInterpolation(newinterp;m=length(s_data),in_place=false)
         tanj(s) = ForwardDiff.derivative(curve,s)
         function nor(s) 
             res= ForwardDiff.derivative(tanj,s)
             n = norm(res)
             if n == 0
                 a,b,c = tanj(s)
-                return [-b,a,c]
+                if a != 0 && b != 0
+                    return [-b,a,c]
+                else
+                    return [1,0,0]
+                end
             end
             return res/n
         end

@@ -3,6 +3,7 @@ using OrdinaryDiffEq
 using DataInterpolations
 using BloodFlowTrixi
 using StaticArrays, LinearAlgebra
+using QuadGK
 
 eq = BloodFlowEquations2D(; h = 0.1)
 
@@ -48,7 +49,6 @@ cb = CallbackSet(
 
 sol = solve(ode, SSPRK33(),dt = dt_adapt(ode),callback= cb)
 
-s = range(0,40,100)
-xyz_data = [[cos(0.3*si),sin(0.3*si),si] for si in s]
-curve_data = (s,xyz_data)
-res = get3DData(eq,curve_data,semi,sol,1)
+# artery center-line
+xyz_data = [[cos(0.2*si),sin(0.2*si),si] for si in range(0,40,100)]
+res = get3DData(eq,xyz_data,semi,sol,1)
