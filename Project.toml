@@ -19,7 +19,7 @@ BloodFlowTrixiDataInterpolationsExt = "DataInterpolations"
 
 [compat]
 DataInterpolations = "8.0"
-ForwardDiff = "0.10"
+ForwardDiff = "0.10, 1"
 LinearAlgebra = "1.10, 1.11"
 QuadGK = "2.10, 2.11"
 StaticArrays = "1.9"
