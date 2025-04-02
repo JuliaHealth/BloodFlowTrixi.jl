@@ -4,15 +4,22 @@ using DataInterpolations
 using BloodFlowTrixi
 using StaticArrays, LinearAlgebra
 using QuadGK
+using LinearAlgebra
 
 eq = BloodFlowEquations2D(; h = 0.1)
+xyz_data = [SA[cos(0.2*si),sin(0.2*si),si] for si in range(0,40,100)]
+
+curve = interpolate_curve(xyz_data)
+L = curve.t[end-1]
+println("curve length : $L")
+BloodFlowTrixi.curvature(s) = norm(DataInterpolations.derivative(curve,s,2))
 
 mesh = P4estMesh(
     (1,2),
     polydeg = 1,
     periodicity = (true,false),
     coordinates_min = (0.0,0.0),
-    coordinates_max = (2*pi,40.0),
+    coordinates_max = (2*pi,L),
     initial_refinement_level = 4
 )
 
@@ -47,8 +54,8 @@ cb = CallbackSet(
     dt_adapt,analyse
 )
 
-sol = solve(ode, SSPRK33(),dt = dt_adapt(ode),callback= cb)
+sol = solve(ode, SSPRK33(),dt = dt_adapt(ode),callback= cb,saveat = 0.03,save_everystep = false)
 
 # artery center-line
-xyz_data = [[cos(0.2*si),sin(0.2*si),si] for si in range(0,40,100)]
+
 res = get3DData(eq,xyz_data,semi,sol,1)

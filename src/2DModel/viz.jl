@@ -149,3 +149,7 @@ function get3DData(eq::BloodFlowEquations2D,semi,sol,time_index ::Int = 1;vtk ::
     er(theta,s) = cos(theta).*nor(s) .+ sin(theta).*∧(tanj(s),nor(s))
     return get3DData(eq,curve,er,semi,sol,time_index;vtk=vtk,out=out)
 end
+
+function interpolate_curve(xyz_data)
+    @error "add DataInterpolations.jl to use this function"
+end
