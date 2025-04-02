@@ -82,5 +82,7 @@ This package is licensed under the MIT license.
 
 ## Acknowledgments
 
-This package was developed as part of my PhD research in applied mathematics, focusing on mathematical modeling and numerical simulation of blood flow in arteries. Special thanks to the developers of **Trixi.jl**, whose framework was invaluable in implementing and testing these models.
+This package was developed as part of my PhD research in applied mathematics in the IMATH laboratory and founded by the University of Toulon in France, focusing on mathematical modeling and numerical simulation of blood flow in arteries. 
+This PhD was supervised by Mehmet Ersoy (PR at university of Toulon) and Omer Eker (PR and neurosurgeon at HcL Lyon).
+Special thanks to the developers of **Trixi.jl**, whose framework was invaluable in implementing and testing these models.
 
