@@ -14,7 +14,7 @@ This package provides:
 - **1D Blood Flow Model**: This model describes blood flow along compliant arteries in a single spatial dimension. It was derived under the assumption of axisymmetric flow and accounts for arterial compliance, inertia, and frictional losses.
   
   More details about this model can be found in my corresponding publication:  
-  **[[Article 1D](https://hal.science/hal-04676130v1)]**
+  **[[Article 1D]([https://hal.science/hal-04676130v1](https://www.scirp.org/journal/paperinformation?paperid=146905))]**
 ```math
 \left\{\begin{aligned}
   \frac{\partial a}{\partial t} + \frac{\partial}{\partial x}(Q) &= 0 \\
