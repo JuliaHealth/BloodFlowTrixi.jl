@@ -1,6 +1,6 @@
 name = "BloodFlowTrixi"
 uuid = "7b46d5ad-635f-4b66-9393-904f183e39b5"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["yolhan83 <yolhan@laposte.net>"]
 
 [deps]
