@@ -5,7 +5,6 @@ version = "0.1.7"
 
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Trixi = "a7f1ee26-1774-49b1-8366-f1abc58fbfcb"
@@ -20,7 +19,6 @@ BloodFlowTrixiDataInterpolationsExt = "DataInterpolations"
 [compat]
 DataInterpolations = "8.0"
 ForwardDiff = "1"
-JuliaFormatter = "2.3.0"
 LinearAlgebra = "1.10,1.11"
 StaticArrays = "1.9"
 Trixi = "0.13, 0.14, 0.15"

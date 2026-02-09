@@ -24,6 +24,11 @@ We will then take care of the issue as soon as possible.
 
 - **Implement Code Changes**: Introduce your modifications, ensuring adherence to the [Julia Blue Style Guidelines](https://github.com/invenia/BlueStyle). For new features, include informative comments, docstrings, and consider enriching the documentation with relevant examples.
 
+- **Format Code**: This project uses JuliaFormatter with Blue style. Run formatting from the repository root using these steps:
+	- `julia --project=dev`
+	- `using JuliaFormatter`
+	- `format(".")`
+
 - **Validate Changes with Tests**: Execute existing tests to verify the compatibility of your alterations with the current functionality. If applicable, incorporate additional tests to validate your new contributions.
 
 - **Undergo Code Review**: Subject your code to review by maintainers, who will provide feedback and may request further adjustments before merging.
