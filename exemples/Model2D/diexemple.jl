@@ -23,9 +23,9 @@ mesh = P4estMesh(
     initial_refinement_level = 4
 )
 
-bc = Dict(
-    :y_neg => boundary_condition_pressure_in,
-    :y_pos => Trixi.BoundaryConditionDoNothing()
+bc = (;
+    y_neg = boundary_condition_pressure_in,
+    y_pos = Trixi.BoundaryConditionDoNothing()
 )
 
 solver = DGSEM(polydeg = 1,
