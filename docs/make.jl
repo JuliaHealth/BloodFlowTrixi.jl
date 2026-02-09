@@ -12,14 +12,7 @@ makedocs(;
         edit_link="master",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-        "Tutorial" => "tuto.md",
-        "Mathematics" => "math.md"
-    ],
+    pages=["Home" => "index.md", "Tutorial" => "tuto.md", "Mathematics" => "math.md"],
 )
 
-deploydocs(;
-    repo="github.com/JuliaHealth/BloodFlowTrixi.jl",
-    devbranch="master",
-)
+deploydocs(; repo="github.com/JuliaHealth/BloodFlowTrixi.jl", devbranch="master")

@@ -75,31 +75,28 @@ P_{in} = \begin{cases}
 ```
 The corresponding inflow area `A_{in}` is computed using the inverse pressure relation, and the boundary state is constructed accordingly.
 """
-function boundary_condition_pressure_in(u_inner, orientation_or_normal,
-direction,
-x, t,
-surface_flux_function,
-eq::BloodFlowEquations1D)
+function boundary_condition_pressure_in(
+    u_inner,
+    orientation_or_normal,
+    direction,
+    x,
+    t,
+    surface_flux_function,
+    eq::BloodFlowEquations1D,
+)
     Pin = ifelse(t < 0.125, 2e4 * sinpi(t / 0.125)^2, 0.0)
     Ain = inv_pressure(Pin, u_inner, eq)
     A0in = u_inner[4]
     ain = Ain - A0in
-    u_boundary =  SVector(
-        ain,
-        u_inner[2],
-        u_inner[3],
-        u_inner[4]
-    )
+    u_boundary = SVector(ain, u_inner[2], u_inner[3], u_inner[4])
     # calculate the boundary flux
     if iseven(direction) # u_inner is "left" of boundary, u_boundary is "right" of boundary
-        flux1 = surface_flux_function[1](u_inner, u_boundary, orientation_or_normal,
-        eq)
-        flux2 = surface_flux_function[2](u_inner, u_boundary, orientation_or_normal,
-        eq)
+        flux1 = surface_flux_function[1](u_inner, u_boundary, orientation_or_normal, eq)
+        flux2 = surface_flux_function[2](u_inner, u_boundary, orientation_or_normal, eq)
     else # u_boundary is "left" of boundary, u_inner is "right" of boundary
-        flux1 = surface_flux_function[1](u_boundary, u_inner, orientation_or_normal,eq)
-        flux2 = surface_flux_function[2](u_boundary, u_inner, orientation_or_normal,eq)
+        flux1 = surface_flux_function[1](u_boundary, u_inner, orientation_or_normal, eq)
+        flux2 = surface_flux_function[2](u_boundary, u_inner, orientation_or_normal, eq)
     end
 
-    return flux1,flux2
+    return flux1, flux2
 end

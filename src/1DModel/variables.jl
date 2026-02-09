@@ -9,7 +9,7 @@ Returns the variable names corresponding to the conserved variables in the blood
 ### Returns
 A tuple of variable names: `("a", "Q", "E", "A0")`.
 """
-Trixi.varnames(::typeof(cons2cons),::BloodFlowEquations1D) = ("a","Q","E","A0")
+Trixi.varnames(::typeof(cons2cons), ::BloodFlowEquations1D) = ("a", "Q", "E", "A0")
 
 @doc raw"""
     Trixi.varnames(::typeof(cons2prim), ::BloodFlowEquations1D)
@@ -22,7 +22,7 @@ Returns the variable names corresponding to the primitive variables in the blood
 ### Returns
 A tuple of variable names: `("A", "w", "P", "A0", "P")`.
 """
-Trixi.varnames(::typeof(cons2prim),::BloodFlowEquations1D) = ("A","w","P","A0","P")
+Trixi.varnames(::typeof(cons2prim), ::BloodFlowEquations1D) = ("A", "w", "P", "A0", "P")
 
 @doc raw"""
     Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations1D)
@@ -35,7 +35,7 @@ Returns the variable names corresponding to the entropy variables in the blood f
 ### Returns
 A tuple of variable names: `("A", "w", "En", "A0", "P")`.
 """
-Trixi.varnames(::typeof(cons2entropy),::BloodFlowEquations1D) = ("A","w","En","A0","P")
+Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations1D) = ("A", "w", "En", "A0", "P")
 
 @doc raw"""
     Trixi.cons2prim(u, eq::BloodFlowEquations1D)
@@ -49,12 +49,12 @@ Converts the conserved variables to primitive variables.
 ### Returns
 Primitive variable vector.
 """
-function Trixi.cons2prim(u,eq::BloodFlowEquations1D)
-    a,Q,E,A0 = u
-    P = pressure(u,eq)
+function Trixi.cons2prim(u, eq::BloodFlowEquations1D)
+    a, Q, E, A0 = u
+    P = pressure(u, eq)
     A = a+A0
     w = Q/A
-    return SVector(A,w,P,A0)
+    return SVector(A, w, P, A0)
 end
 
 @doc raw"""
@@ -68,13 +68,13 @@ Converts the conserved variables to entropy variables.
 ### Returns
 Entropy variable vector.
 """
-function Trixi.cons2entropy(u,eq::BloodFlowEquations1D)
-    a,Q,E,A0 = u
-    P = pressure(u,eq)
+function Trixi.cons2entropy(u, eq::BloodFlowEquations1D)
+    a, Q, E, A0 = u
+    P = pressure(u, eq)
     A = a+A0
     w = Q/A
-    En = entropy(u,eq)
-    return SVector(A,w,En,A0)
+    En = entropy(u, eq)
+    return SVector(A, w, En, A0)
 end
 
 @doc raw"""
@@ -89,14 +89,13 @@ Converts the primitive variables to conserved variables.
 ### Returns
 Conserved variable vector.
 """
-function Trixi.prim2cons(u,eq::BloodFlowEquations1D)
-    A,w,P,A0 = u
+function Trixi.prim2cons(u, eq::BloodFlowEquations1D)
+    A, w, P, A0 = u
     a = A-A0
     Q = w*A
     E = P/sqrt(pi)*A0/(sqrt(A)-sqrt(A0))*(1-eq.xi^2)/eq.h
-    return SVector(a,Q,E,A0)
+    return SVector(a, Q, E, A0)
 end
-
 
 @doc raw"""
     friction(u, x, eq::BloodFlowEquations1D)
@@ -111,11 +110,10 @@ Calculates the friction term for the blood flow equations, which represents visc
 ### Returns
 Friction coefficient as a scalar.
 """
-function friction(u,x,eq::BloodFlowEquations1D)
-    R=radius(u,eq) 
+function friction(u, x, eq::BloodFlowEquations1D)
+    R=radius(u, eq)
     return eltype(u)(-11*eq.nu/R)
 end
-
 
 @doc raw"""
     pressure(u, eq::BloodFlowEquations1D)
@@ -129,7 +127,7 @@ Computes the pressure given the state vector based on the compliance of the arte
 ### Returns
 Pressure as a scalar.
 """
-function pressure(u,eq::BloodFlowEquations1D)
+function pressure(u, eq::BloodFlowEquations1D)
     T = eltype(u)
     A = u[1]+u[4]
     E = u[3]
@@ -152,7 +150,7 @@ Computes the radius of the artery based on the cross-sectional area.
 ### Returns
 Radius as a scalar.
 """
-function radius(u,eq::BloodFlowEquations1D)
+function radius(u, eq::BloodFlowEquations1D)
     return sqrt((u[1]+u[4])/pi)
 end
 
@@ -169,7 +167,7 @@ Computes the inverse relation of pressure to cross-sectional area.
 ### Returns
 Cross-sectional area corresponding to the given pressure.
 """
-function inv_pressure(p,u,eq::BloodFlowEquations1D)
+function inv_pressure(p, u, eq::BloodFlowEquations1D)
     T = eltype(u)
     E = u[3]
     A0 = u[4]
@@ -192,7 +190,7 @@ Computes the derivative of pressure with respect to cross-sectional area.
 ### Returns
 Derivative of pressure.
 """
-function pressure_der(u,eq::BloodFlowEquations1D)
+function pressure_der(u, eq::BloodFlowEquations1D)
     T = eltype(u)
     A = u[1]+u[4]
     E = u[3]
@@ -213,10 +211,10 @@ Computes the entropy of the system for the given state vector.
 ### Returns
 Entropy as a scalar value.
 """
-function Trixi.entropy(u,eq::BloodFlowEquations1D)
-    up = cons2prim(u,eq)
-    _,_,E,_ = u
-    A,w,P,A0 = up
+function Trixi.entropy(u, eq::BloodFlowEquations1D)
+    up = cons2prim(u, eq)
+    _, _, E, _ = u
+    A, w, P, A0 = up
     psi = w^2/2+P
     b = E*eq.h/(1-eq.xi^2)
     pt = b*sqrt(pi)/(3*A0)*(A^(3/2)-A0^(3/2))

@@ -39,6 +39,13 @@ jobs:
       - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
+      - uses: julia-actions/julia-processcoverage@v1
+        if: matrix.version == '1.10' && matrix.os == 'ubuntu-latest'
+      - uses: codecov/codecov-action@v5
+        if: matrix.version == '1.10' && matrix.os == 'ubuntu-latest'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
   docs:
     name: Documentation
     runs-on: ubuntu-latest
