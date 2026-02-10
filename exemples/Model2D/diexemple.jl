@@ -36,9 +36,9 @@ solver = DGSEM(;
 semi = SemidiscretizationHyperbolic(
     mesh,
     eq,
-    initial_condition_simple;
+    initial_condition_simple,
+    solver;
     source_terms=source_term_simple,
-    solver,
     boundary_conditions=bc,
 )
 
