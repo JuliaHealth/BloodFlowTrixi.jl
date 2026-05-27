@@ -15,14 +15,14 @@ The governing equations are given by
 """
 struct BloodFlowEquations1D{T<:Real} <: AbstractBloodFlowEquations{1,4}
     # constant coefficients
-    h ::T      # Wall thickness
+    h::T      # Wall thickness
     rho::T     # Fluid density
     xi::T      # Poisson's ratio
     nu::T      # Viscosity coefficient
 end
 
-function BloodFlowEquations1D(;h,rho=1.0,xi=0.25,nu=0.04)
-    return BloodFlowEquations1D(h,rho,xi,nu)
+function BloodFlowEquations1D(; h, rho=1.0, xi=0.25, nu=0.04)
+    return BloodFlowEquations1D(h, rho, xi, nu)
 end
 
 Trixi.have_nonconservative_terms(::BloodFlowEquations1D) = Trixi.True()
@@ -40,14 +40,14 @@ Computes the flux vector for the conservation laws of the blood flow model.
 ### Returns
 Flux vector as an `SVector`.
 """
-function Trixi.flux(u, orientation::Integer,eq::BloodFlowEquations1D)
+function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations1D)
     # up = cons2prim(u,eq)
-    P = pressure(u,eq)
-    a,Q,E,A0 = u 
+    P = pressure(u, eq)
+    a, Q, E, A0 = u
     A = a+A0
     f1 = Q
     f2 = Q^2/A+A*P
-    return SVector(f1,f2,0,0)
+    return SVector(f1, f2, 0, 0)
 end
 
 @doc raw"""
@@ -64,17 +64,17 @@ Computes the non-conservative flux for the model, used for handling discontinuit
 ### Returns
 Non-conservative flux vector.
 """
-function flux_nonconservative(u_ll,u_rr,orientation::Integer,eq::BloodFlowEquations1D)
+function flux_nonconservative(u_ll, u_rr, orientation::Integer, eq::BloodFlowEquations1D)
     T = eltype(u_ll)
-    p_ll = pressure(u_ll,eq)
-    p_rr = pressure(u_rr,eq)
+    p_ll = pressure(u_ll, eq)
+    p_rr = pressure(u_rr, eq)
     pmean = (p_ll+p_rr)/2
-    a_ll,_,_,A0_ll = u_ll
-    a_rr,_,_,A0_rr = u_rr
+    a_ll, _, _, A0_ll = u_ll
+    a_rr, _, _, A0_rr = u_rr
     A_ll = a_ll + A0_ll
     A_rr = a_rr + A0_rr
     Ajump = A_rr - A_ll
-    return SVector(zero(T),-pmean*Ajump,0,0)
+    return SVector(zero(T), -pmean*Ajump, 0, 0)
 end
 
 @doc raw"""
@@ -91,16 +91,18 @@ Calculates the maximum absolute speed for wave propagation in the blood flow mod
 ### Returns
 Maximum absolute speed.
 """
-function Trixi.max_abs_speed_naive(u_ll,u_rr,orientation::Integer,eq ::BloodFlowEquations1D)
-    a_ll,Q_ll,E_ll,A0_ll = u_ll
-    a_rr,Q_rr,E_rr,A0_rr = u_rr
+function Trixi.max_abs_speed_naive(
+    u_ll, u_rr, orientation::Integer, eq::BloodFlowEquations1D
+)
+    a_ll, Q_ll, E_ll, A0_ll = u_ll
+    a_rr, Q_rr, E_rr, A0_rr = u_rr
     A_ll = a_ll + A0_ll
     A_rr = a_rr + A0_rr
-    pp_ll = pressure_der(u_ll,eq)
-    pp_rr = pressure_der(u_rr,eq)
+    pp_ll = pressure_der(u_ll, eq)
+    pp_rr = pressure_der(u_rr, eq)
     w_ll = Q_ll/A_ll
     w_rr = Q_rr/A_rr
-    return max(abs(w_ll),abs(w_rr))+max(sqrt(A_ll*pp_ll),sqrt(A_rr*pp_rr))
+    return max(abs(w_ll), abs(w_rr))+max(sqrt(A_ll*pp_ll), sqrt(A_rr*pp_rr))
 end
 
 @doc raw"""
@@ -114,13 +116,12 @@ Computes the maximum absolute speed for wave propagation in the model.
 Maximum absolute speed as a scalar value.
 """
 
-function Trixi.max_abs_speeds(u,eq::BloodFlowEquations1D)
-    a,Q,E,A0 = u 
+function Trixi.max_abs_speeds(u, eq::BloodFlowEquations1D)
+    a, Q, E, A0 = u
     A = a+A0
-    pp= pressure_der(u,eq)
+    pp = pressure_der(u, eq)
     return abs(Q/A) + sqrt(A*pp)
 end
-
 
 @doc raw"""
     (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations1D)
@@ -136,13 +137,12 @@ Calculates the dissipation term using the Local Lax-Friedrichs method.
 ### Returns
 Dissipation vector.
 """
-function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr,
-    orientation_or_normal_direction,
-    eq::BloodFlowEquations1D)
-    λ = dissipation.max_abs_speed(u_ll, u_rr, orientation_or_normal_direction,
-    eq)
+function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(
+    u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations1D
+)
+    λ = dissipation.max_abs_speed(u_ll, u_rr, orientation_or_normal_direction, eq)
     diss = -0.5f0 .* abs(λ) .* (u_rr .- u_ll)
-    return SVector(diss[1], diss[2],0,0)
+    return SVector(diss[1], diss[2], 0, 0)
 end
 
 include("./variables.jl")

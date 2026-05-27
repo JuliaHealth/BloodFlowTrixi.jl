@@ -17,10 +17,9 @@ function initial_condition_simple(x, t, eq::BloodFlowEquations2D; R0=2.0)
     A0 = T(R0^2 / 2)
     QRθ = T(0.0)
     Qs = T(0.0)
-    E = T(1e7) 
+    E = T(1e7)
     return SVector(zero(T), QRθ, Qs, E, A0)
 end
-
 
 @doc raw"""
     curvature(x)
@@ -34,7 +33,6 @@ Returns a constant curvature for the 2D blood flow model.
 Curvature as a scalar.
 """
 curvature(x) = typeof(x)(1.0)
-
 
 @doc raw"""
     source_term_simple(u, x, t, eq::BloodFlowEquations2D)
@@ -57,15 +55,10 @@ function source_term_simple(u, x, t, eq::BloodFlowEquations2D)
     s1 = zero(T)
     k = friction(u, x, eq)
     R = radius(u, eq)
-    s2 = T(
-        2 * R / 3 * curvature(x[2]) * sin(x[1]) * Qs^2 / A + 3 * R * k * QRθ / A
-    )
-    s3 = T(
-        -2 * R / 3 * curvature(x[2]) * sin(x[1]) * Qs * QRθ / A + R * k * Qs / A
-    )
+    s2 = T(2 * R / 3 * curvature(x[2]) * sin(x[1]) * Qs^2 / A + 3 * R * k * QRθ / A)
+    s3 = T(-2 * R / 3 * curvature(x[2]) * sin(x[1]) * Qs * QRθ / A + R * k * Qs / A)
     return SVector(s1, s2, s3, 0, 0)
 end
-
 
 @doc raw"""
     boundary_condition_pressure_in(u_inner, orientation_or_normal, direction, x, t, surface_flux_function, eq::BloodFlowEquations2D)
@@ -84,18 +77,20 @@ Applies an inflow boundary condition with a prescribed pressure for the 2D blood
 ### Returns
 Boundary flux as an `SVector`.
 """
-function boundary_condition_pressure_in(u_inner, orientation_or_normal, direction, x, t, surface_flux_function, eq::BloodFlowEquations2D)
+function boundary_condition_pressure_in(
+    u_inner,
+    orientation_or_normal,
+    direction,
+    x,
+    t,
+    surface_flux_function,
+    eq::BloodFlowEquations2D,
+)
     Pin = ifelse(t < 0.125, 2e4 * sinpi(t / 0.125)^2, 0.0)
     Ain = inv_pressure(Pin, u_inner, eq)
     A0in = u_inner[5]
     ain = Ain - A0in
-    u_boundary = SVector(
-        ain,
-        u_inner[2],
-        u_inner[3],
-        u_inner[4],
-        u_inner[5]
-    )
+    u_boundary = SVector(ain, u_inner[2], u_inner[3], u_inner[4], u_inner[5])
     # Calculate the boundary flux
     if iseven(direction) # u_inner is "left" of boundary, u_boundary is "right" of boundary
         flux1 = surface_flux_function[1](u_inner, u_boundary, orientation_or_normal, eq)
@@ -104,9 +99,8 @@ function boundary_condition_pressure_in(u_inner, orientation_or_normal, directio
         flux1 = surface_flux_function[1](u_boundary, u_inner, orientation_or_normal, eq)
         flux2 = surface_flux_function[2](u_boundary, u_inner, orientation_or_normal, eq)
     end
-    return flux1,flux2
+    return flux1, flux2
 end
-
 
 @doc raw"""
     boundary_condition_pressure_in(u_inner, normal, x, t, surface_flux_function, eq::BloodFlowEquations2D)
@@ -124,19 +118,15 @@ Applies an inflow boundary condition with a prescribed pressure for the 2D blood
 ### Returns
 Boundary flux as an `SVector`.
 """
-function boundary_condition_pressure_in(u_inner, normal, x, t, surface_flux_function, eq::BloodFlowEquations2D)
+function boundary_condition_pressure_in(
+    u_inner, normal, x, t, surface_flux_function, eq::BloodFlowEquations2D
+)
     Pin = ifelse(t < 0.125, 2e4 * sinpi(t / 0.125)^2, 0.0)
     A0in = u_inner[5]
     Ain = inv_pressure(Pin, u_inner, eq)
     ain = Ain - A0in
-    u_boundary = SVector(
-        ain,
-        u_inner[2],
-        u_inner[3],
-        u_inner[4],
-        u_inner[5]
-    )
+    u_boundary = SVector(ain, u_inner[2], u_inner[3], u_inner[4], u_inner[5])
     flux1 = surface_flux_function[1](u_inner, u_boundary, normal, eq)
     flux2 = surface_flux_function[2](u_inner, u_boundary, normal, eq)
-    return flux1,flux2
+    return flux1, flux2
 end
