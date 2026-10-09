@@ -3,6 +3,7 @@
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliahealth.org/BloodFlowTrixi.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliahealth.org/BloodFlowTrixi.jl/dev/)
 [![Build Status](https://github.com/yolhan83/BloodFlowTrixi.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/yolhan83/BloodFlowTrixi.jl/actions/workflows/CI.yml?query=branch%3Amaster)
+[![Coverage](https://codecov.io/gh/JuliaHealth/BloodFlowTrixi.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaHealth/BloodFlowTrixi.jl)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 **BloodFlowTrixi.jl** is a Julia package that implements one-dimensional (1D) and two-dimensional (2D) blood flow models for arterial circulation. These models are derived from the Navier-Stokes equations and were developed as part of my PhD research in applied mathematics, focusing on cardiovascular pathologies such as aneurysms and stenoses.
@@ -57,6 +58,10 @@ pkg> add Trixi
 pkg> add BloodFlowTrixi
 ```
 
+## Usage Examples
+
+For detailed usage examples and tutorials on how to use BloodFlowTrixi.jl, please visit the [Tutorial Documentation](https://juliahealth.org/BloodFlowTrixi.jl/stable/tuto/).
+
 # Simulations
 ![Alt Text](./docs/src/graph.gif)
 ![Alt Text](./docs/src/graph2d.gif)
@@ -79,6 +84,14 @@ pkg> add BloodFlowTrixi
 ## License
 
 This package is licensed under the MIT license.
+
+## Contributing
+
+We welcome contributions from the community! If you find a bug, have a feature request, or want to improve the package, please:
+
+1. Check the [Contributing Guidelines](CONTRIBUTING.md)
+2. See the [Code of Conduct](CODE_OF_CONDUCT.md)
+3. Open a [new issue](https://github.com/JuliaHealth/BloodFlowTrixi.jl/issues) or [pull request](https://github.com/JuliaHealth/BloodFlowTrixi.jl/pulls)
 
 ## Acknowledgments
 

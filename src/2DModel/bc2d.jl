@@ -15,13 +15,20 @@ Applies an outflow boundary condition for the 2D blood flow model without reflec
 ### Returns
 Boundary flux as an `SVector`.
 """
-function boundary_condition_outflow(u_inner, orientation_or_normal, direction, x, t, surface_flux_function, eq::BloodFlowEquations2D)
+function boundary_condition_outflow(
+    u_inner,
+    orientation_or_normal,
+    direction,
+    x,
+    t,
+    surface_flux_function,
+    eq::BloodFlowEquations2D,
+)
     # Calculate the boundary flux without reflection
     flux1 = surface_flux_function[1](u_inner, u_inner, orientation_or_normal, eq)
     flux2 = surface_flux_function[2](u_inner, u_inner, orientation_or_normal, eq)
-    return flux1,flux2
+    return flux1, flux2
 end
-
 
 @doc raw"""
     boundary_condition_outflow(u_inner, orientation_or_normal, x, t, surface_flux_function, eq::BloodFlowEquations2D)
@@ -39,13 +46,14 @@ Applies an outflow boundary condition for the 2D blood flow model without reflec
 ### Returns
 Boundary flux as an `SVector`.
 """
-function boundary_condition_outflow(u_inner, orientation_or_normal, x, t, surface_flux_function, eq::BloodFlowEquations2D)
+function boundary_condition_outflow(
+    u_inner, orientation_or_normal, x, t, surface_flux_function, eq::BloodFlowEquations2D
+)
     # Calculate the boundary flux without reflection
     flux1 = surface_flux_function[1](u_inner, u_inner, orientation_or_normal, eq)
     flux2 = surface_flux_function[2](u_inner, u_inner, orientation_or_normal, eq)
-    return flux1,flux2
+    return flux1, flux2
 end
-
 
 @doc raw"""
     boundary_condition_slip_wall(u_inner, orientation_or_normal, direction, x, t, surface_flux_function, eq::BloodFlowEquations2D)
@@ -64,7 +72,15 @@ Applies a slip-wall boundary condition for the 2D blood flow model by reflecting
 ### Returns
 Boundary flux as an `SVector`.
 """
-function boundary_condition_slip_wall(u_inner, orientation_or_normal, direction, x, t, surface_flux_function, eq::BloodFlowEquations2D)
+function boundary_condition_slip_wall(
+    u_inner,
+    orientation_or_normal,
+    direction,
+    x,
+    t,
+    surface_flux_function,
+    eq::BloodFlowEquations2D,
+)
     # Create the external boundary solution state with reflected normal velocity
     u_boundary = SVector(u_inner[1], -u_inner[2], u_inner[3], u_inner[4])
 
@@ -76,5 +92,5 @@ function boundary_condition_slip_wall(u_inner, orientation_or_normal, direction,
         flux1 = surface_flux_function[1](u_boundary, u_inner, orientation_or_normal, eq)
         flux2 = surface_flux_function[2](u_boundary, u_inner, orientation_or_normal, eq)
     end
-    return flux1,flux2
+    return flux1, flux2
 end

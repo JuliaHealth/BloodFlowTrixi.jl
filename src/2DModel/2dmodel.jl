@@ -23,14 +23,14 @@ The governing equations account for conservation of mass and momentum, incorpora
 
 """
 struct BloodFlowEquations2D{T<:Real} <: AbstractBloodFlowEquations{2,5}
-    h ::T      # Wall thickness
+    h::T      # Wall thickness
     rho::T     # Fluid density
     xi::T      # Poisson's ratio
     nu::T      # Viscosity coefficient
 end
 
-function BloodFlowEquations2D(;h,rho=1.0,xi=0.25,nu=0.04)
-    return BloodFlowEquations2D(h,rho,xi,nu)
+function BloodFlowEquations2D(; h, rho=1.0, xi=0.25, nu=0.04)
+    return BloodFlowEquations2D(h, rho, xi, nu)
 end
 
 Trixi.have_nonconservative_terms(::BloodFlowEquations2D) = Trixi.True()
@@ -49,7 +49,7 @@ Flux vector as an `SVector`.
 """
 function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations2D)
     P = pressure(u, eq) # Compute pressure from state vector
-    a, QRθ, Qs, E, A0 = u 
+    a, QRθ, Qs, E, A0 = u
     QRθ = 0.0
     A = a + A0 # Total cross-sectional area
     if orientation == 1 # Flux in θ-direction
@@ -60,7 +60,7 @@ function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations2D)
     else # Flux in s-direction
         f1 = Qs
         f2 = QRθ * Qs / A
-        f3 = Qs^2 / A - QRθ^2/(2*A^2)+ A * P
+        f3 = Qs^2 / A - QRθ^2/(2*A^2)+A * P
         return SVector(f1, f2, f3, 0, 0)
     end
 end
@@ -78,18 +78,18 @@ Flux vector as an `SVector`.
 """
 function Trixi.flux(u, normal, eq::BloodFlowEquations2D)
     P = pressure(u, eq) # Compute pressure from state vector
-    a, QRθ, Qs, E, A0 = u 
+    a, QRθ, Qs, E, A0 = u
     A = a + A0 # Total cross-sectional area
     # if normal == 1 # Flux in θ-direction
-        f1 = QRθ / A
-        f2 = QRθ^2 / (2 * A^2) + A * P
-        f3 = QRθ * Qs / A^2
-        fl1 =  SVector(f1, f2, f3, 0, 0)
+    f1 = QRθ / A
+    f2 = QRθ^2 / (2 * A^2) + A * P
+    f3 = QRθ * Qs / A^2
+    fl1 = SVector(f1, f2, f3, 0, 0)
     # else # Flux in s-direction
-        f1 = Qs
-        f2 = QRθ * Qs / A
-        f3 = Qs^2 / A - QRθ^2/(2*A^2)+ A * P
-        fl2 = SVector(f1, f2, f3, 0, 0)
+    f1 = Qs
+    f2 = QRθ * Qs / A
+    f3 = Qs^2 / A - QRθ^2/(2*A^2)+A * P
+    fl2 = SVector(f1, f2, f3, 0, 0)
     return fl1 .* normal[1] .+ fl2 .* normal[2]
 end
 
@@ -149,9 +149,9 @@ function flux_nonconservative(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     A_rr = a_rr + A0_rr
     Ajump = A_rr - A_ll # Compute jump in area
     # if orientation == 1
-        fn1 =  SVector(zero(T), -pmean * Ajump, 0, 0, 0)
+    fn1 = SVector(zero(T), -pmean * Ajump, 0, 0, 0)
     # else
-        fn2 = SVector(zero(T), 0, -pmean * Ajump, 0, 0)
+    fn2 = SVector(zero(T), 0, -pmean * Ajump, 0, 0)
     # end
     return @. fn1*normal[1] + fn2*normal[2]
 end
@@ -170,7 +170,9 @@ Computes the maximum absolute speed for wave propagation in the 2D blood flow mo
 Maximum absolute speed.
 
 """
-function Trixi.max_abs_speed_naive(u_ll, u_rr, orientation::Integer, eq::BloodFlowEquations2D)
+function Trixi.max_abs_speed_naive(
+    u_ll, u_rr, orientation::Integer, eq::BloodFlowEquations2D
+)
     a_ll, QRθ_ll, Qs_ll, _, A0_ll = u_ll
     a_rr, QRθ_rr, Qs_rr, _, A0_rr = u_rr
     A_ll = a_ll + A0_ll
@@ -178,7 +180,9 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, orientation::Integer, eq::BloodFl
     pp_ll = pressure_der(u_ll, eq)
     pp_rr = pressure_der(u_rr, eq)
     if orientation == 1
-        return max(max(abs(QRθ_ll)/A_ll^2, abs(QRθ_rr)/A_rr^2), max(sqrt(pp_ll), sqrt(pp_rr)))
+        return max(
+            max(abs(QRθ_ll)/A_ll^2, abs(QRθ_rr)/A_rr^2), max(sqrt(pp_ll), sqrt(pp_rr))
+        )
     else
         ws_ll = Qs_ll / A_ll
         ws_rr = Qs_rr / A_rr
@@ -207,13 +211,13 @@ function Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     A_rr = a_rr + A0_rr
     pp_ll = pressure_der(u_ll, eq)
     pp_rr = pressure_der(u_rr, eq)
-        ws_ll = Qs_ll / A_ll
-        ws_rr = Qs_rr / A_rr
+    ws_ll = Qs_ll / A_ll
+    ws_rr = Qs_rr / A_rr
     return max(
         abs(ws_ll*normal[2] + sqrt(A_ll*pp_ll)*sqrt(normal[1]^2/A_ll + normal[2]^2)),
         abs(ws_rr*normal[2] + sqrt(A_rr*pp_rr)*sqrt(normal[1]^2/A_rr + normal[2]^2)),
         abs(ws_ll*normal[2] + QRθ_ll/A_ll^2*normal[1]),
-        abs(ws_rr*normal[2] + QRθ_rr/A_rr^2*normal[1])
+        abs(ws_rr*normal[2] + QRθ_rr/A_rr^2*normal[1]),
     )
 end
 
@@ -230,11 +234,11 @@ Tuple containing the maximum absolute speeds in the \( \theta \)- and \( s \)-di
 
 
 """
-function Trixi.max_abs_speeds(u,eq::BloodFlowEquations2D)
-    a,QRθ,Qs,E,A0 = u 
+function Trixi.max_abs_speeds(u, eq::BloodFlowEquations2D)
+    a, QRθ, Qs, E, A0 = u
     A = a+A0
-    pp= pressure_der(u,eq)
-    return max(abs(QRθ/A^2),sqrt(pp)),abs(Qs/A) + sqrt(A*pp)
+    pp = pressure_der(u, eq)
+    return max(abs(QRθ/A^2), sqrt(pp)), abs(Qs/A) + sqrt(A*pp)
 end
 
 @doc raw"""
@@ -251,12 +255,13 @@ Computes the dissipation term using the Local Lax-Friedrichs method for the 2D b
 Dissipation vector.
 """
 
-function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations2D)
+function (dissipation::Trixi.DissipationLocalLaxFriedrichs)(
+    u_ll, u_rr, orientation_or_normal_direction, eq::BloodFlowEquations2D
+)
     λ = dissipation.max_abs_speed(u_ll, u_rr, orientation_or_normal_direction, eq)
     diss = -0.5 .* abs(λ) .* (u_rr .- u_ll) # Compute dissipation term
     return SVector(diss[1], diss[2], diss[3], 0, 0)
 end
-
 
 include("./variables.jl")
 include("./bc2d.jl")

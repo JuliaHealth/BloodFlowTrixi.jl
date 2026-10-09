@@ -55,7 +55,7 @@ This function is useful for evaluating the correctness of source term handling i
 function Trixi.source_terms_convergence_test(u, x, t, eq::BloodFlowEquations1D)
     T = eltype(u)
     A0 = u[4]
-    s1 = pi * t * cospi(x[1] * t) |> T
+    s1 = T(pi * t * cospi(x[1] * t))
     # k = friction(u, x, eq)
     # R = radius(u, eq)
     s2 = pi * x[1] * cospi(x[1] * t) + pi * t * cospi(x[1] * t) * sinpi(x[1] * t) / A0

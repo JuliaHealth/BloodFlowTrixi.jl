@@ -12,7 +12,6 @@ Tuple containing the names of the conservative variables.
 """
 Trixi.varnames(::typeof(cons2cons), ::BloodFlowEquations2D) = ("a", "QRθ", "Qs", "E", "A0")
 
-
 @doc raw"""
     Trixi.varnames(::typeof(cons2prim), ::BloodFlowEquations2D)
 
@@ -27,7 +26,6 @@ Tuple containing the names of the primitive variables.
 """
 Trixi.varnames(::typeof(cons2prim), ::BloodFlowEquations2D) = ("A", "wθ", "ws", "P", "A0")
 
-
 @doc raw"""
     Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations2D)
 
@@ -40,8 +38,9 @@ Returns the variable names in entropy form for the 2D blood flow model.
 ### Returns
 Tuple containing the names of the entropy variables.
 """
-Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations2D) = ("A", "wθ", "ws", "En", "A0")
-
+Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations2D) = (
+    "A", "wθ", "ws", "En", "A0"
+)
 
 @doc raw"""
     Trixi.prim2cons(u, eq::BloodFlowEquations2D)
@@ -63,7 +62,6 @@ function Trixi.prim2cons(u, eq::BloodFlowEquations2D)
     E = P * sqrt(2) * A0 / (sqrt(A) - sqrt(A0)) * (1 - eq.xi^2) / eq.h
     return SVector(a, QRθ, Qs, E, A0)
 end
-
 
 @doc raw"""
     Trixi.cons2prim(u, eq::BloodFlowEquations2D)
@@ -88,7 +86,6 @@ function Trixi.cons2prim(u, eq::BloodFlowEquations2D)
     P = pressure(u, eq)
     return SVector(A, wθ, ws, P, A0)
 end
-
 
 @doc raw"""
     Trixi.cons2entropy(u, eq::BloodFlowEquations2D)
@@ -115,7 +112,6 @@ function Trixi.cons2entropy(u, eq::BloodFlowEquations2D)
     return SVector(A, wθ, ws, En, A0)
 end
 
-
 @doc raw"""
     friction(u, x, eq::BloodFlowEquations2D)
 
@@ -133,7 +129,6 @@ function friction(u, x, eq::BloodFlowEquations2D)
     R = radius(u, eq) # Compute the radius based on cross-sectional area
     return eltype(u)(-11 * eq.nu / R) # Return friction term based on viscosity and radius
 end
-
 
 @doc raw"""
     pressure(u, eq::BloodFlowEquations2D)
@@ -159,7 +154,6 @@ function pressure(u, eq::BloodFlowEquations2D)
     b = E * h / (1 - xi^2) # Precompute constant b
     return T(b * (R - R0) / R0^2)
 end
-
 
 @doc raw"""
     radius(u, eq::BloodFlowEquations2D)
@@ -201,7 +195,6 @@ function inv_pressure(p, u, eq::BloodFlowEquations2D)
     return T((R0^2 * p / b + R0)^2 / 2)
 end
 
-
 @doc raw"""
     pressure_der(u, eq::BloodFlowEquations2D)
 
@@ -224,7 +217,6 @@ function pressure_der(u, eq::BloodFlowEquations2D)
     b = E * h / (1 - xi^2)
     return T((b / sqrt(2)) * 0.5 / (sqrt(A) * A0))
 end
-
 
 @doc raw"""
     Trixi.entropy(u, eq::BloodFlowEquations2D)

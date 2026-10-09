@@ -1,7 +1,7 @@
 using BloodFlowTrixi
 using Test
 
-@testset "BloodFlowTrixi.jl"  begin
+@testset "BloodFlowTrixi.jl" begin
     include("./Aqua/aquatest.jl")
     include("./Extensions/DataInterpolationsTest.jl")
 
