@@ -69,7 +69,6 @@ function get3DData(
         Avali = aval[i] + A0val[i]
         Rvali = sqrt(2*Avali)
         wthetavali = Typ(4/3*(Qthval[i]/Rvali)/Avali)
-        wthetavali = Qthval[i]/Avali
         wsvali = Qsval[i]/Avali
         Pvali = Pval[i]
         xi, yi, zi = M(thvali, svali, Rvali)

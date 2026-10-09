@@ -44,11 +44,9 @@ Computes the source terms for convergence tests of the blood flow equations.
 Source terms vector.
 
 ### Details
-The source terms are derived based on the smooth initial condition and friction effects:
+The manufactured source replaces physical friction and preserves the exact state:
 - `s_1` represents the source term for area perturbation and is given by `s_1 = \pi t \cos(\pi x t)`.
-- `s_2` represents the source term for the flow rate and includes contributions from spatial and temporal variations as well as friction effects.
-
-The radius `R` is computed using the `radius` function, and the friction coefficient `k` is obtained using the `friction` function.
+- `s_2 = Q_t + 2 Q Q_x / A_0` supplies the momentum residual.
 
 This function is useful for evaluating the correctness of source term handling in numerical solvers.
 """
@@ -56,8 +54,6 @@ function Trixi.source_terms_convergence_test(u, x, t, eq::BloodFlowEquations1D)
     T = eltype(u)
     A0 = u[4]
     s1 = T(pi * t * cospi(x[1] * t))
-    # k = friction(u, x, eq)
-    # R = radius(u, eq)
-    s2 = pi * x[1] * cospi(x[1] * t) + pi * t * cospi(x[1] * t) * sinpi(x[1] * t) / A0
+    s2 = pi * x[1] * cospi(x[1] * t) + 2 * pi * t * cospi(x[1] * t) * sinpi(x[1] * t) / A0
     return SVector(s1, s2, 0, 0)
 end

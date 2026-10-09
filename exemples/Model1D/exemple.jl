@@ -6,14 +6,12 @@ eq = BloodFlowEquations1D(; h=0.1)
 
 mesh = TreeMesh(0.0, 40.0; initial_refinement_level=4, periodicity=false)
 
-bc = (; x_neg=boundary_condition_pressure_in, x_pos=Trixi.BoundaryConditionDoNothing())
+bc = (; x_neg=boundary_condition_pressure_in, x_pos=boundary_condition_outflow)
 
 solver = DGSEM(;
     polydeg=2,
     surface_flux=(flux_lax_friedrichs, flux_nonconservative),
-    volume_integral=VolumeIntegralFluxDifferencing((
-        flux_lax_friedrichs, flux_nonconservative
-    )),
+    volume_integral=VolumeIntegralFluxDifferencing((flux_central, flux_nonconservative)),
 )
 
 semi = SemidiscretizationHyperbolic(

@@ -1,88 +1,147 @@
-# 1D and 2D Mathematical Models for Blood Flow
+# Blood flow equations
 
-## 1D Model
-The 1D model is based on a **cross-sectional integration of the Navier-Stokes equations** under the assumption of **incompressible flow** in thin arteries. This model is particularly suitable for global studies of the arterial network, where the geometry is approximately linear or weakly curved.
+The models follow [Mannes et al., 1D](https://doi.org/10.4236/jamp.2025.1310198)
+and [Mannes et al., 2D](https://doi.org/10.4236/jamp.2025.1311220).
+## Pressure and material variables
 
-### Assumptions and Simplifications
-- The flow is considered **incompressible**.
-- The artery is modeled as a cylindrical tube with a cross-section varying with pressure.
+The stored state uses a = A - A0. Young's modulus E and reference area A0
+are stationary fields. The function pressure returns physical transmural
+pressure P, with zero external pressure as reference. Below, p = P/rho is
+specific pressure, as in the derivation sections of the papers.
+The function pressure_der differentiates P, and inv_A_pressure_der inverts
+A * pressure_der without a density factor.
 
-### Main Equations
-The derived equations form a system of **hyperbolic partial differential equations** describing mass and momentum conservation:
+The code chooses the non-positive Navier coefficient k = -11nu/R.
+This is a friction law choice; the reduced equations allow other negative k.
 
-1. **Mass conservation**:
+## One-dimensional models
+
+Here A = pi R^2, Q = A w, and
+
 ```math
-∂_t A + ∂_x Q = 0
+p(A,x)=\beta(x)\frac{\sqrt A-\sqrt{A_0(x)}}{A_0(x)},
+\qquad \beta=\frac{Eh\sqrt\pi}{\rho(1-\xi^2)}.
 ```
 
-2. **Momentum conservation**:
+The first-order model is
+
 ```math
-∂_t Q + ∂_x \left( \frac{Q^2}{A} + \frac{1}{\rho} A P(A, x) \right) - \partial_x \left( 3\nu A \partial_x\left(\frac{Q}{A}\right) \right) = \frac{1}{\rho} P(A, x) ∂_x A - \frac{2\pi R K}{1-\frac{Rk}{4\nu}} \frac{Q}{A}
+\partial_t A+\partial_x Q=0,\qquad
+\partial_t Q+\partial_x\left(\frac{Q^2}{A}+Ap\right)
+=p\partial_x A+\Gamma_1\frac QA,\qquad \Gamma_1=2\pi Rk.
 ```
 
-### Energy and Entropy Relation of the 1D Model
-The energy associated with the system is given by:
+The second-order model adds axial diffusion and changes wall friction:
+
 ```math
-E(t, x) = \frac{A u_x^2}{2} + \frac{1}{\rho} A P(A, x) - \frac{\beta(x)}{3 \rho A_0(x)} A^{3/2}
+\partial_t A+\partial_x Q=0,\qquad
+\partial_t Q+\partial_x\left(\frac{Q^2}{A}+Ap\right)
+-\partial_x\left(3\nu A\partial_x\left(\frac QA\right)\right)
+=p\partial_x A+\Gamma_2\frac QA,\qquad
+\Gamma_2=\frac{2\pi Rk}{1-Rk/(4\nu)}.
 ```
 
-The entropy relation verified by this energy is:
+Trixi adds the divergence of the parabolic flux to the right-hand side.
+The implemented flux is therefore positive: 3nu (Q_x - Q/A A_x).
+With the chosen friction law, both friction and diffusion vanish continuously
+at nu = 0; this case is handled without dividing by zero.
+
+### Energy and characteristics
+
+Define
+
 ```math
-∂_t E + ∂_x \left( \left( E + \frac{\beta(x)}{3 \rho A_0(x)} A^{3/2} \right) u_x \right) = ∂_x \left( 3 \nu A ∂_x \left( \frac{Q}{A} \right) \right) u_x + \frac{2 \pi R k}{1 - R k / 4 \nu} u_x^2 ≤ 0
+\widetilde p=\frac{\beta}{3A_0}(A^{3/2}-A_0^{3/2}),\qquad
+\mathcal E_1=\frac{Q^2}{2A}+Ap-\widetilde p.
 ```
 
-Under null boundary conditions:
+For smooth solutions of the second-order model,
+
 ```math
-∂_t \left( \int_0^L E \, dx \right) = - 3 \nu \int_0^L A (∂_x u_x)^2 \, dx - \frac{2 \pi R k}{1 - R k / 4 \nu} \int_0^L u_x^2 \, dx < 0
+\partial_t\mathcal E_1+
+\partial_x\left((\mathcal E_1+\widetilde p)w\right)
+=w\partial_x(3\nu A\partial_x w)+\Gamma_2w^2.
 ```
 
----
+With vanishing boundary energy flux and diffusion work, integration gives
 
-## 2D Model
-The 2D model is derived from a **radial integration of the Navier-Stokes equations**, enabling better representation of local effects in complex geometric configurations, such as **arterial bifurcations** and **severe aneurysms**.
-
-### Assumptions and Simplifications
-- The flow is assumed **incompressible**.
-- The artery geometry is described using a curvilinear coordinate system (\( s, \theta \)).
-- The velocity profile is obtained without relying on a specific ansatz.
-
-### Main Equations
-1. **Mass conservation**:
 ```math
-∂_t A + ∂_θ \left( \frac{Q_{Rθ}}{A} \right) + ∂_s(Q_s) = 0
+\frac{d}{dt}\int_0^L\mathcal E_1\,dx
+=-\int_0^L3\nu A(\partial_x w)^2\,dx
++\int_0^L\Gamma_2w^2\,dx\leq0.
 ```
 
-2. **Momentum conservation (radial and axial components)**:
+For the first-order model, omit diffusion and use Gamma1 instead of Gamma2.
+At open boundaries, retain the boundary energy flux. Diffusion work need not
+be non-positive pointwise.
+
+The hyperbolic speeds are w +/- c, where c = sqrt(A P_A/rho).
+For locally fixed material fields, W+ = w + 4c and W- = w - 4c are Riemann
+invariants of the source-free hyperbolic part. Outflow preserves the outgoing
+invariant and imposes the incoming invariant of the rest state.
+It assumes subcritical axial outflow. The second-order model uses this same
+hyperbolic condition together with the parabolic boundary operators.
+
+## Two-dimensional model
+
+The coordinates are angle theta and axial arclength s. Here A = R^2/2,
+M = QRtheta = (3/4) R A wtheta, and N = Qs = A ws.
+This A differs from the full cross-sectional area of the 1D model.
+
 ```math
-∂_t (Q_{Rθ}) + ∂_θ \left( \frac{Q_{Rθ}^2}{2 A^2} + A P \right) + ∂_s \left( \frac{Q_{Rθ} Q_s}{A} \right) = \frac{2 R}{3} C \sin θ \frac{Q_s^2}{A} + \frac{2 R k Q_{Rθ}}{A} + P∂_θ (A)
+p=P/\rho=b\frac{R-R_0}{R_0^2},\qquad
+b=\frac{Eh}{\rho(1-\xi^2)},\qquad R=\sqrt{2A}.
 ```
+
+Writing C(s) for curvature, the equations are
+
 ```math
-∂_t (Q_s) + ∂_θ \left( \frac{Q_s Q_{Rθ}}{A^2} \right) + ∂_s \left( \frac{Q_s^2}{A} - \frac{Q_{Rθ}^2}{2 A^2} + A P \right) = - \frac{2 R}{3} C \sin θ \frac{Q_{Rθ} Q_s}{A^2} + \frac{k R Q_s}{A} + P∂_s (A)
+\begin{aligned}
+\partial_t A+\partial_\theta(M/A)+\partial_sN&=0,\\
+\partial_t M+\partial_\theta\left(\frac{M^2}{2A^2}+Ap\right)
++\partial_s(MN/A)
+&=p\partial_\theta A+\frac{2R}{3}C\sin\theta\frac{N^2}{A}
++2Rk\frac MA,\\
+\partial_t N+\partial_\theta(MN/A^2)
++\partial_s\left(\frac{N^2}{A}-\frac{M^2}{2A^2}+Ap\right)
+&=p\partial_s A-\frac{2R}{3}C\sin\theta\frac{MN}{A^2}
++Rk\frac NA.
+\end{aligned}
 ```
 
-### Energy and Entropy Relation of the 2D Model
-The energy associated with the system is given by:
+### Energy and characteristics
+
+With beta2 = b/sqrt(2), define
+
 ```math
-E(t, θ, s) = A \left( \frac{9}{8} u_θ^2 + \frac{u_s^2}{2} + p \right) - \tilde{p}
+\widetilde p=\frac{\beta_2}{3A_0}(A^{3/2}-A_0^{3/2}),\qquad
+\mathcal E_2=\frac{M^2}{2A^2}+\frac{N^2}{2A}+Ap-\widetilde p
+=A\left(\frac{9}{16}w_\theta^2+\frac12w_s^2+p\right)-\widetilde p.
 ```
 
-The corresponding entropy relation is:
+Let G = E2 + ptilde - M^2/(2A^2). The energy identity is
+
 ```math
-∂_t E + ∂_θ \left( \frac{3}{2} \frac{u_θ}{R} \left( E + \tilde{p} - \frac{9}{16} A u_θ^2 \right) \right) + ∂_s \left( u_s \left( E + \tilde{p} - \frac{9}{16} A u_θ^2 \right) \right) = \frac{9}{4} R k u_θ^2 + k R u_s^2 ≤ 0
+\partial_t\mathcal E_2+\partial_\theta\left(\frac{M}{A^2}G\right)
++\partial_s\left(\frac NA G\right)
+=\frac94Rk w_\theta^2+Rk w_s^2\leq0.
 ```
 
-This relation ensures that the energy locally decreases over time, guaranteeing the **stability** of the model.
+Curvature sources cancel in this identity. Global energy decay additionally
+requires zero or appropriately controlled boundary energy flux.
 
----
+The coordinate-direction characteristic speeds are
 
-## Comparison of 1D and 2D Models
-- **1D Model**:
-  - Fast and efficient for global simulations of large arterial networks.
-  - Well-suited for simple or weakly curved geometries.
-  - Very low computational cost.
-- **2D Model**:
-  - More accurate for complex geometries (bifurcations, aneurysms).
-  - Better captures local effects and fluid-structure interactions.
-  - Moderate computational cost compared to three-dimensional models (3D NS-FSI).
+```math
+\lambda_\theta\in\left\{-\sqrt{p_A},\sqrt{p_A},M/A^2\right\},\qquad
+\lambda_s\in\left\{w_s-c,w_s,w_s+c\right\}.
+```
 
-The combined use of these two models provides an **efficient alternative to 3D simulations**, offering a good compromise between accuracy and computational cost.
+For positive compliance, A p_A > (9/8) wtheta^2 gives a positive definite
+energy Hessian and strict hyperbolicity in every spatial direction.
+Checking distinct eigenvalues only along the coordinate axes is insufficient
+for this stronger statement; see the audit.
+
+Axial outflow uses ws +/- 4c and preserves M/A, which remains constant across
+axial acoustic waves. Characteristic reconstruction applies to boundaries
+aligned with s; other normals use extrapolation.
