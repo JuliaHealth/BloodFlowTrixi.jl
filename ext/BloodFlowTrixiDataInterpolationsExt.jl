@@ -11,7 +11,7 @@ using ForwardDiff
 function BloodFlowTrixi.interpolate_curve(curve_data::AbstractArray)
     N = length(curve_data)
     quadinterp = QuadraticSpline(curve_data, range(0, 1, N))
-    curve = SmoothArcLengthInterpolation(quadinterp; m=N, in_place=false)
+    curve = SmoothArcLengthInterpolation(quadinterp; m=N)
     return curve
 end
 function BloodFlowTrixi.get3DData(
