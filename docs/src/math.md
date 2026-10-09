@@ -2,9 +2,6 @@
 
 The models follow [Mannes et al., 1D](https://doi.org/10.4236/jamp.2025.1310198)
 and [Mannes et al., 2D](https://doi.org/10.4236/jamp.2025.1311220).
-Corrections to formulas in the papers are recorded in
-[Equation verification](equation_audit.md).
-
 ## Pressure and material variables
 
 The stored state uses a = A - A0. Young's modulus E and reference area A0
