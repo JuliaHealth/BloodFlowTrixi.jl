@@ -200,6 +200,18 @@ function pressure_der(u, eq::BloodFlowEquations1D)
     return T(E*h*sqrt(pi)/(1-xi^2)*0.5/(sqrt(A)*A0))
 end
 
+# A = (App*A0*2/b)^2
+
+function inv_A_pressure_der(App, u, eq::BloodFlowEquations1D)
+    T = eltype(u)
+    E = u[3]
+    A0 = u[4]
+    xi = eq.xi
+    h = eq.h
+    b = E*h*sqrt(pi)/(1-xi^2)
+    return (App*A0*2/b)^2
+end
+
 @doc raw"""
     Trixi.entropy(u, eq::BloodFlowEquations1D)
 Computes the entropy of the system for the given state vector.
