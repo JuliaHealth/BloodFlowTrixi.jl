@@ -38,7 +38,7 @@ function get3DData(
     thetaval = semi.cache.elements.node_coordinates[1, :, :, :]
     sval = semi.cache.elements.node_coordinates[2, :, :, :]
     # Get unique values
-    soltime = sol[time_index]
+    soltime = sol.u[time_index]
     aval = @view(soltime[1:5:end])
     Qthval = @view(soltime[2:5:end])
     Qsval = @view(soltime[3:5:end])

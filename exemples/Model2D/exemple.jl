@@ -1,6 +1,6 @@
 using Trixi
 using BloodFlowTrixi
-using OrdinaryDiffEq
+using OrdinaryDiffEqSSPRK
 
 eq = BloodFlowEquations2D(; h=0.1)
 

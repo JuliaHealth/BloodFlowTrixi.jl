@@ -1,5 +1,5 @@
 using Trixi
-using OrdinaryDiffEq
+using OrdinaryDiffEqSSPRK
 using DataInterpolations
 using BloodFlowTrixi
 using StaticArrays, LinearAlgebra

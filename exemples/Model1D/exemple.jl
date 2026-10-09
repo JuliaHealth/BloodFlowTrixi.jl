@@ -1,10 +1,10 @@
 using Trixi
 using BloodFlowTrixi
-using OrdinaryDiffEq
+using OrdinaryDiffEqSSPRK
 
 eq = BloodFlowEquations1D(; h=0.1)
 
-mesh = TreeMesh(0.0, 40.0; initial_refinement_level=4, n_cells_max=10^4, periodicity=false)
+mesh = TreeMesh(0.0, 40.0; initial_refinement_level=4, periodicity=false)
 
 bc = (; x_neg=boundary_condition_pressure_in, x_pos=Trixi.BoundaryConditionDoNothing())
 
