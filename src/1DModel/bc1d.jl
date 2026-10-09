@@ -24,28 +24,31 @@ function boundary_condition_outflow(
     surface_flux_function,
     eq::BloodFlowEquations1D,
 )
-    a_inner, Q_inner, E_inner, A0_inner = u_inner
-    A_inner = a_inner+A0_inner
-    PP_inner = pressure_der(u_inner, eq)
-    c_inner = sqrt(A_inner*PP_inner) 
-    u_equi = SVector(0.0,0.0,E_inner, A0_inner)
-    PP_equi = pressure_der(u_equi, eq)
-    c_equi = sqrt(A0_inner*PP_equi) 
-    W2_out = Q_inner/A_inner + 4*c_inner # This should be conserve Q/A + 4 √(A P'(A))
-    W1_in =  Q_inner/A_inner - 4*c_inner # This should equal the equilibrum state
-    W1_out = -4*c_equi 
-    A_out = inv_A_pressure_der(((W2_out - W1_out)/8)^2,u_inner,eq)
-    Q_out = A_out*(W1_out+W2_out)/2
-    u_boundary = SVector(A_out-A0_inner,Q_out,E_inner,A0_inner)
+    side = iseven(direction) ? 1 : -1
+    u_boundary = boundary_state_outflow(u_inner, side, eq)
     # calculate the boundary flux
     if iseven(direction) # u_inner is "left" of boundary, u_boundary is "right" of boundary
         flux1 = surface_flux_function[1](u_inner, u_boundary, orientation_or_normal, eq)
         flux2 = surface_flux_function[2](u_inner, u_boundary, orientation_or_normal, eq)
-    else # u_inner is "left" of boundary, u_inner is "right" of boundary
+    else # u_boundary is "left" of boundary, u_inner is "right" of boundary
         flux1 = surface_flux_function[1](u_boundary, u_inner, orientation_or_normal, eq)
         flux2 = surface_flux_function[2](u_boundary, u_inner, orientation_or_normal, eq)
     end
     return flux1, flux2
+end
+
+@inline function boundary_state_outflow(u_inner, side, eq::BloodFlowEquations1D)
+    a_inner, Q_inner, E_inner, A0_inner = u_inner
+    A_inner = a_inner + A0_inner
+    c_inner = sqrt(A_inner * pressure_der(u_inner, eq) / eq.rho)
+    u_equilibrium = SVector(zero(a_inner), zero(Q_inner), E_inner, A0_inner)
+    c_equilibrium = sqrt(A0_inner * pressure_der(u_equilibrium, eq) / eq.rho)
+    # Preserve the outgoing characteristic and impose equilibrium on the incoming one.
+    W_outgoing = Q_inner / A_inner + side * 4 * c_inner
+    W_incoming = -side * 4 * c_equilibrium
+    A_out = inv_A_pressure_der(eq.rho * ((W_outgoing - W_incoming) / 8)^2, u_inner, eq)
+    Q_out = A_out * (W_outgoing + W_incoming) / 2
+    return SVector(A_out - A0_inner, Q_out, E_inner, A0_inner)
 end
 
 @doc raw"""

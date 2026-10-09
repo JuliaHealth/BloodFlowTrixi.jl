@@ -20,9 +20,9 @@ Returns the variable names corresponding to the primitive variables in the blood
 - `::BloodFlowEquations1D`: Instance of `BloodFlowEquations1D`.
 
 ### Returns
-A tuple of variable names: `("A", "w", "P", "A0", "P")`.
+A tuple of variable names: `("A", "w", "P", "A0")`.
 """
-Trixi.varnames(::typeof(cons2prim), ::BloodFlowEquations1D) = ("A", "w", "P", "A0", "P")
+Trixi.varnames(::typeof(cons2prim), ::BloodFlowEquations1D) = ("A", "w", "P", "A0")
 
 @doc raw"""
     Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations1D)
@@ -33,9 +33,9 @@ Returns the variable names corresponding to the entropy variables in the blood f
 - `::BloodFlowEquations1D`: Instance of `BloodFlowEquations1D`.
 
 ### Returns
-A tuple of variable names: `("A", "w", "En", "A0", "P")`.
+A tuple of variable names: `("A", "w", "En", "A0")`.
 """
-Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations1D) = ("A", "w", "En", "A0", "P")
+Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations1D) = ("A", "w", "En", "A0")
 
 @doc raw"""
     Trixi.cons2prim(u, eq::BloodFlowEquations1D)
@@ -118,7 +118,8 @@ end
 @doc raw"""
     pressure(u, eq::BloodFlowEquations1D)
 
-Computes the pressure given the state vector based on the compliance of the artery.
+Computes physical transmural pressure based on the compliance of the artery.
+The equations use this pressure divided by `eq.rho`.
 
 ### Parameters
 - `u`: State vector.
@@ -200,8 +201,11 @@ function pressure_der(u, eq::BloodFlowEquations1D)
     return T(E*h*sqrt(pi)/(1-xi^2)*0.5/(sqrt(A)*A0))
 end
 
-# A = (App*A0*2/b)^2
+@doc raw"""
+    inv_A_pressure_der(App, u, eq::BloodFlowEquations1D)
 
+Return the cross-sectional area corresponding to `App = A * pressure_der(u, eq)`.
+"""
 function inv_A_pressure_der(App, u, eq::BloodFlowEquations1D)
     T = eltype(u)
     E = u[3]
@@ -209,7 +213,7 @@ function inv_A_pressure_der(App, u, eq::BloodFlowEquations1D)
     xi = eq.xi
     h = eq.h
     b = E*h*sqrt(pi)/(1-xi^2)
-    return (App*A0*2/b)^2
+    return T((App*A0*2/b)^2)
 end
 
 @doc raw"""
@@ -227,8 +231,8 @@ function Trixi.entropy(u, eq::BloodFlowEquations1D)
     up = cons2prim(u, eq)
     _, _, E, _ = u
     A, w, P, A0 = up
-    psi = w^2/2+P
-    b = E*eq.h/(1-eq.xi^2)
+    psi = w^2/2+P/eq.rho
+    b = E*eq.h/(eq.rho*(1-eq.xi^2))
     pt = b*sqrt(pi)/(3*A0)*(A^(3/2)-A0^(3/2))
     return A*psi - pt
 end

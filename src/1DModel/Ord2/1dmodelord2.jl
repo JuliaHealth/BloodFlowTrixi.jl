@@ -3,19 +3,22 @@ struct BloodFlowEquations1DOrd2{E} <:
     model1d::E
 end
 function Trixi.varnames(mapin, eq::BloodFlowTrixi.BloodFlowEquations1DOrd2)
-    Trixi.varnames(mapin, eq.model1d)
+    return Trixi.varnames(mapin, eq.model1d)
 end
 
 function Trixi.flux(u, gradients, orientation::Int, eq_parab::BloodFlowEquations1DOrd2)
-    dudx = gradients
+    dudx, = gradients
     a, Q, _, A0 = u
     A = a+A0
-    val = -3 * eq_parab.model1d.nu * (-(dudx[1] + dudx[4])*Q/A + dudx[2])
+    # Trixi adds div(flux_parabolic) to the right-hand side.
+    val = 3 * eq_parab.model1d.nu * (-(dudx[1] + dudx[4])*Q/A + dudx[2])
     return SVector(0.0, val, 0, 0)
 end
 
 function source_term_simple_ord2(u, x, t, eq::BloodFlowEquations1D)
     res = source_term_simple(u, x, t, eq)
+    # With k = -11nu/R, both friction and diffusion vanish as nu tends to zero.
+    iszero(eq.nu) && return res
     k = friction(u, x, eq)
     R = radius(u, eq)
     return SVector(res[1], res[2]/(1-R*k/(4*eq.nu)), res[3], res[4])
@@ -31,15 +34,34 @@ end
     operator_type::Trixi.Gradient,
     equations_parabolic::BloodFlowEquations1DOrd2,
 )
-    return boundary_condition_pressure_in(
-        u_inner,
-        orientation_or_normal,
-        direction,
-        x,
-        t,
-        flux_lax_friedrichs,
-        equations_parabolic.model1d,
-    )
+    return boundary_state_pressure_in(u_inner, t, equations_parabolic.model1d)
+end
+
+@inline function boundary_condition_outflow(
+    flux_inner,
+    u_inner,
+    orientation_or_normal,
+    direction,
+    x,
+    t,
+    operator_type::Trixi.Gradient,
+    equations_parabolic::BloodFlowEquations1DOrd2,
+)
+    side = iseven(direction) ? 1 : -1
+    return boundary_state_outflow(u_inner, side, equations_parabolic.model1d)
+end
+
+@inline function boundary_condition_outflow(
+    flux_inner,
+    u_inner,
+    orientation_or_normal,
+    direction,
+    x,
+    t,
+    operator_type::Trixi.Divergence,
+    equations_parabolic::BloodFlowEquations1DOrd2,
+)
+    return flux_inner
 end
 @inline function boundary_condition_pressure_in(
     flux_inner,

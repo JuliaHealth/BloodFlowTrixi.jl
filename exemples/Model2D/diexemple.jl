@@ -12,7 +12,11 @@ xyz_data = [SA[cos(0.2*si), sin(0.2*si), si] for si in range(0, 40, 100)]
 curve = interpolate_curve(xyz_data)
 L = curve.t[end - 1]
 println("curve length : $L")
-BloodFlowTrixi.curvature(s) = norm(DataInterpolations.derivative(curve, s, 2))
+source_terms_curve = let centerline = curve
+    curvature_function = s -> norm(DataInterpolations.derivative(centerline, s, 2))
+    (u, x, t, eq) ->
+        source_term_simple(u, x, t, eq; curvature_function=curvature_function)
+end
 
 mesh = P4estMesh(
     (1, 2);
@@ -23,14 +27,12 @@ mesh = P4estMesh(
     initial_refinement_level=4,
 )
 
-bc = (; y_neg=boundary_condition_pressure_in, y_pos=Trixi.BoundaryConditionDoNothing())
+bc = (; y_neg=boundary_condition_pressure_in, y_pos=boundary_condition_outflow)
 
 solver = DGSEM(;
     polydeg=1,
     surface_flux=(flux_lax_friedrichs, flux_nonconservative),
-    volume_integral=VolumeIntegralFluxDifferencing((
-        flux_lax_friedrichs, flux_nonconservative
-    )),
+    volume_integral=VolumeIntegralFluxDifferencing((flux_central, flux_nonconservative)),
 )
 
 semi = SemidiscretizationHyperbolic(
@@ -38,7 +40,7 @@ semi = SemidiscretizationHyperbolic(
     eq,
     initial_condition_simple,
     solver;
-    source_terms=source_term_simple,
+    source_terms=source_terms_curve,
     boundary_conditions=bc,
 )
 

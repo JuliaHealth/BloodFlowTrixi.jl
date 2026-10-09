@@ -38,9 +38,8 @@ Returns the variable names in entropy form for the 2D blood flow model.
 ### Returns
 Tuple containing the names of the entropy variables.
 """
-Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations2D) = (
-    "A", "wθ", "ws", "En", "A0"
-)
+Trixi.varnames(::typeof(cons2entropy), ::BloodFlowEquations2D) =
+    ("A", "wθ", "ws", "En", "A0")
 
 @doc raw"""
     Trixi.prim2cons(u, eq::BloodFlowEquations2D)
@@ -133,7 +132,8 @@ end
 @doc raw"""
     pressure(u, eq::BloodFlowEquations2D)
 
-Computes the pressure for the 2D blood flow model.
+Computes physical transmural pressure for the 2D blood flow model.
+The paper's specific pressure is `pressure(u, eq) / eq.rho`.
 
 ### Parameters
 - `u`: State vector.
@@ -219,6 +219,19 @@ function pressure_der(u, eq::BloodFlowEquations2D)
 end
 
 @doc raw"""
+    inv_A_pressure_der(App, u, eq::BloodFlowEquations2D)
+
+Return the cross-sectional area corresponding to `App = A * pressure_der(u, eq)`.
+"""
+function inv_A_pressure_der(App, u, eq::BloodFlowEquations2D)
+    T = eltype(u)
+    E = u[4]
+    A0 = u[5]
+    b = E * eq.h / (1 - eq.xi^2)
+    return T((2 * sqrt(2) * A0 * App / b)^2)
+end
+
+@doc raw"""
     Trixi.entropy(u, eq::BloodFlowEquations2D)
 
 Computes the entropy for the 2D blood flow model.
@@ -234,8 +247,8 @@ function Trixi.entropy(u, eq::BloodFlowEquations2D)
     up = cons2prim(u, eq)
     _, _, _, E, _ = u
     A, wt, ws, P, A0 = up
-    psi = (ws^2 + wt^2 * 9 / 8) / 2 + P
-    b = E * eq.h / (1 - eq.xi^2)
+    psi = (ws^2 + wt^2 * 9 / 8) / 2 + P / eq.rho
+    b = E * eq.h / (eq.rho * (1 - eq.xi^2))
     pt = b / sqrt(2) / (3 * A0) * (A^(3 / 2) - A0^(3 / 2))
     return A * psi - pt
 end

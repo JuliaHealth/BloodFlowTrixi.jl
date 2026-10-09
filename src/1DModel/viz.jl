@@ -88,5 +88,5 @@ function get3DData(
             vtk["Pressure", VTKPointData()] = P
         end
     end
-    return (; x=x, y=y, z=z, A=A, w=w)
+    return (; x=x, y=y, z=z, A=A, w=w, P=P)
 end

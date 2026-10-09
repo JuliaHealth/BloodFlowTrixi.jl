@@ -36,7 +36,7 @@ Computes a simple source term for the blood flow model, focusing on frictional e
 ### Returns
 Source terms vector where:
 - `s_1 = 0` (no source for area perturbation).
-- `s_2` represents the friction term given by `s_2 = \frac{2 \pi k Q}{R A}`.
+- `s_2` represents the friction term given by `s_2 = \frac{2 \pi R k Q}{A}`.
 
 Friction coefficient `k` is computed using the `friction` function, and the radius `R` is obtained using the `radius` function.
 """
@@ -84,11 +84,7 @@ function boundary_condition_pressure_in(
     surface_flux_function,
     eq::BloodFlowEquations1D,
 )
-    Pin = ifelse(t < 0.125, 2e4 * sinpi(t / 0.125)^2, 0.0)
-    Ain = inv_pressure(Pin, u_inner, eq)
-    A0in = u_inner[4]
-    ain = Ain - A0in
-    u_boundary = SVector(ain, u_inner[2], u_inner[3], u_inner[4])
+    u_boundary = boundary_state_pressure_in(u_inner, t, eq)
     # calculate the boundary flux
     if iseven(direction) # u_inner is "left" of boundary, u_boundary is "right" of boundary
         flux1 = surface_flux_function[1](u_inner, u_boundary, orientation_or_normal, eq)
@@ -99,4 +95,10 @@ function boundary_condition_pressure_in(
     end
 
     return flux1, flux2
+end
+
+@inline function boundary_state_pressure_in(u_inner, t, eq::BloodFlowEquations1D)
+    Pin = ifelse(t < 0.125, 2e4 * sinpi(t / 0.125)^2, 0.0)
+    Ain = inv_pressure(Pin, u_inner, eq)
+    return SVector(Ain - u_inner[4], u_inner[2], u_inner[3], u_inner[4])
 end

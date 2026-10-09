@@ -29,11 +29,11 @@ In **Trixi.jl**, the Tree mesh has two labeled boundaries: **x_neg** (left bound
 ```julia
 bc = (
     x_neg = boundary_condition_pressure_in,
-    x_pos = Trixi.BoundaryConditionDoNothing()
+    x_pos = boundary_condition_outflow
 )
 ```
 - `boundary_condition_pressure_in` applies a pressure inflow condition at the left boundary.
-- `Trixi.BoundaryConditionDoNothing()` specifies a "do nothing" boundary condition at the right boundary, meaning no flux is imposed.
+- `boundary_condition_outflow` preserves the outgoing characteristic and imposes the incoming characteristic from the equilibrium state.
 
 #### Boundary condition implementation
 The inflow boundary condition is defined as:
@@ -65,10 +65,11 @@ This time-dependent inflow pressure mimics a pulsatile flow, typical in arterial
 
 To compute fluxes at cell interfaces, we use a combination of conservative and non-conservative fluxes:
 ```julia
-volume_flux = (flux_lax_friedrichs, flux_nonconservative)
+volume_flux = (flux_central, flux_nonconservative)
 surface_flux = (flux_lax_friedrichs, flux_nonconservative)
 ```
-- `flux_lax_friedrichs` is a standard numerical flux for hyperbolic conservation laws.
+- `flux_central` is the centered flux used in the DG volume integral.
+- `flux_lax_friedrichs` supplies dissipation at cell interfaces and in the local finite-volume stabilization.
 - `flux_nonconservative` handles the non-conservative terms in the model, particularly those related to pressure discontinuities.
 
 The non-conservative flux function is defined as:
@@ -215,9 +216,9 @@ eq = BloodFlowEquations1D(;h=0.1)
 mesh = TreeMesh(0.0,40.0,initial_refinement_level=6,n_cells_max=10^4,periodicity=false)
 bc = (
     x_neg = boundary_condition_pressure_in,
-    x_pos = Trixi.BoundaryConditionDoNothing()
+    x_pos = boundary_condition_outflow
     )
-volume_flux = (flux_lax_friedrichs,flux_nonconservative)
+volume_flux = (flux_central,flux_nonconservative)
 surface_flux = (flux_lax_friedrichs,flux_nonconservative)
 basis = LobattoLegendreBasis(2)
 id = IndicatorHennemannGassner(eq,basis;variable=first)
@@ -290,12 +291,12 @@ In **Trixi.jl**, the P4est mesh has four labeled boundaries: **x_neg** (left bou
 ```julia
 bc = Dict(
     :y_neg =>boundary_condition_pressure_in,
-    :y_pos => Trixi.BoundaryConditionDoNothing()
+    :y_pos => boundary_condition_outflow
     )
 
 ```
 - `boundary_condition_pressure_in` applies a pressure inflow condition at the bottom boundary.
-- `Trixi.BoundaryConditionDoNothing()` specifies a "do nothing" boundary condition at the right boundary, meaning no flux is imposed.
+- `boundary_condition_outflow` preserves the outgoing axial characteristic and imposes the incoming characteristic from the equilibrium state.
 
 #### Boundary condition implementation
 The inflow boundary condition is defined as:
@@ -326,10 +327,11 @@ This time-dependent inflow pressure mimics a pulsatile flow, typical in arterial
 
 To compute fluxes at cell interfaces, we use a combination of conservative and non-conservative fluxes:
 ```julia
-volume_flux = (flux_lax_friedrichs, flux_nonconservative)
+volume_flux = (flux_central, flux_nonconservative)
 surface_flux = (flux_lax_friedrichs, flux_nonconservative)
 ```
-- `flux_lax_friedrichs` is a standard numerical flux for hyperbolic conservation laws.
+- `flux_central` is the centered flux used in the DG volume integral.
+- `flux_lax_friedrichs` supplies dissipation at cell interfaces and in the local finite-volume stabilization.
 - `flux_nonconservative` handles the non-conservative terms in the model, particularly those related to pressure discontinuities.
 
 The non-conservative flux function is defined as:
@@ -485,13 +487,13 @@ mesh = P4estMesh(
 )
 bc = Dict(
     :y_neg =>boundary_condition_pressure_in,
-    :y_pos => Trixi.BoundaryConditionDoNothing()
+    :y_pos => boundary_condition_outflow
     )
-volume_flux = (flux_lax_friedrichs,flux_nonconservative)
+volume_flux = (flux_central,flux_nonconservative)
 surface_flux = (flux_lax_friedrichs,flux_nonconservative)
 basis = LobattoLegendreBasis(2)
 id = IndicatorHennemannGassner(eq,basis;variable=first)
-vol =VolumeIntegralShockCapturingHG(id,volume_flux_dg = surface_flux,volume_flux_fv = volume_flux) 
+vol =VolumeIntegralShockCapturingHG(id,volume_flux_dg = volume_flux,volume_flux_fv = surface_flux)
 solver = DGSEM(basis,surface_flux,vol)
 semi = SemidiscretizationHyperbolic(mesh,
 eq,
@@ -597,5 +599,3 @@ You can apply filters like **Clip**, **Slice**, and **Glyph** to inspect differe
 - **1D reconstruction** assumes a straight centerline and rotates the cross-section to create a 3D vessel.
 - **2D reconstruction** follows a predefined curved centerline with tangent and normal vectors.
 - **VTK output** enables advanced visualization using **ParaView** or similar tools.
-
-

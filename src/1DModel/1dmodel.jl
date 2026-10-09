@@ -7,11 +7,14 @@ The governing equations are given by
 ```math
 \left\{\begin{aligned}
   \frac{\partial a}{\partial t} + \frac{\partial}{\partial x}(Q) &= 0 \\
-  \frac{\partial Q}{\partial t} + \frac{\partial}{\partial x}\left(\frac{Q^2}{A} + A P(a)\right) &= P(a) \frac{\partial A}{\partial x} - 2 \pi R k \frac Q {A}\\
-  P(a) &= P_{ext} + \frac{Eh\sqrt{\pi}}{1-\xi^2}\frac{\sqrt{A} - \sqrt{A_0}}{A_0} \\
+  \frac{\partial Q}{\partial t} + \frac{\partial}{\partial x}\left(\frac{Q^2}{A} + \frac{A P(a)}{\rho}\right) &= \frac{P(a)}{\rho} \frac{\partial A}{\partial x} + 2 \pi R k \frac Q {A}\\
+  P(a) &= \frac{Eh\sqrt{\pi}}{1-\xi^2}\frac{\sqrt{A} - \sqrt{A_0}}{A_0} \\
   R &= \sqrt{\frac{A}{\pi}}
 \end{aligned}\right.
 ```
+
+`pressure` returns physical transmural pressure; the momentum equation uses `P/rho`.
+The Navier friction coefficient `k` is non-positive.
 """
 struct BloodFlowEquations1D{T<:Real} <: AbstractBloodFlowEquations{1,4}
     # constant coefficients
@@ -42,7 +45,7 @@ Flux vector as an `SVector`.
 """
 function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations1D)
     # up = cons2prim(u,eq)
-    P = pressure(u, eq)
+    P = pressure(u, eq) / eq.rho
     a, Q, E, A0 = u
     A = a+A0
     f1 = Q
@@ -68,7 +71,7 @@ function flux_nonconservative(u_ll, u_rr, orientation::Integer, eq::BloodFlowEqu
     T = eltype(u_ll)
     p_ll = pressure(u_ll, eq)
     p_rr = pressure(u_rr, eq)
-    pmean = (p_ll+p_rr)/2
+    pmean = (p_ll+p_rr)/(2*eq.rho)
     a_ll, _, _, A0_ll = u_ll
     a_rr, _, _, A0_rr = u_rr
     A_ll = a_ll + A0_ll
@@ -98,8 +101,8 @@ function Trixi.max_abs_speed_naive(
     a_rr, Q_rr, E_rr, A0_rr = u_rr
     A_ll = a_ll + A0_ll
     A_rr = a_rr + A0_rr
-    pp_ll = pressure_der(u_ll, eq)
-    pp_rr = pressure_der(u_rr, eq)
+    pp_ll = pressure_der(u_ll, eq) / eq.rho
+    pp_rr = pressure_der(u_rr, eq) / eq.rho
     w_ll = Q_ll/A_ll
     w_rr = Q_rr/A_rr
     return max(abs(w_ll), abs(w_rr))+max(sqrt(A_ll*pp_ll), sqrt(A_rr*pp_rr))
@@ -119,7 +122,7 @@ Maximum absolute speed as a scalar value.
 function Trixi.max_abs_speeds(u, eq::BloodFlowEquations1D)
     a, Q, E, A0 = u
     A = a+A0
-    pp = pressure_der(u, eq)
+    pp = pressure_der(u, eq) / eq.rho
     return abs(Q/A) + sqrt(A*pp)
 end
 

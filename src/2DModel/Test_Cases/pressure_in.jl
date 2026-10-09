@@ -35,7 +35,7 @@ Curvature as a scalar.
 curvature(x) = typeof(x)(1.0)
 
 @doc raw"""
-    source_term_simple(u, x, t, eq::BloodFlowEquations2D)
+    source_term_simple(u, x, t, eq::BloodFlowEquations2D; curvature_function=curvature)
 
 Computes a simple source term for the 2D blood flow model, including friction and curvature effects.
 
@@ -44,19 +44,21 @@ Computes a simple source term for the 2D blood flow model, including friction an
 - `x`: Position vector.
 - `t`: Time value.
 - `eq::BloodFlowEquations2D`: Instance of `BloodFlowEquations2D`.
+- `curvature_function`: Curvature as a function of the axial coordinate.
 
 ### Returns
 Source term as an `SVector`.
 """
-function source_term_simple(u, x, t, eq::BloodFlowEquations2D)
+function source_term_simple(u, x, t, eq::BloodFlowEquations2D; curvature_function=curvature)
     T = eltype(u)
     a, QRθ, Qs, _, A0 = u
     A = a + A0
     s1 = zero(T)
     k = friction(u, x, eq)
     R = radius(u, eq)
-    s2 = T(2 * R / 3 * curvature(x[2]) * sin(x[1]) * Qs^2 / A + 3 * R * k * QRθ / A)
-    s3 = T(-2 * R / 3 * curvature(x[2]) * sin(x[1]) * Qs * QRθ / A + R * k * Qs / A)
+    C = curvature_function(x[2])
+    s2 = T(2 * R / 3 * C * sin(x[1]) * Qs^2 / A + 2 * R * k * QRθ / A)
+    s3 = T(-2 * R / 3 * C * sin(x[1]) * Qs * QRθ / A^2 + R * k * Qs / A)
     return SVector(s1, s2, s3, 0, 0)
 end
 

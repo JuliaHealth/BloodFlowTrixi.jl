@@ -10,10 +10,10 @@ end
 
 function Trixi.source_terms_convergence_test(u, x, t, eq::BloodFlowEquations2D)
     T = eltype(u)
-    A0 = u[4]
-    s1 = T(pi * t * cospi(x[1] * t))
-    # k = friction(u, x, eq)
-    # R = radius(u, eq)
-    s2 = pi * x[1] * cospi(x[1] * t) + pi * t * cospi(x[1] * t) * sinpi(x[1] * t) / A0
-    return SVector(s1, s2, 0, 0)
+    A0 = u[5]
+    Q = sinpi(x[1] * t)
+    Qθ = pi * t * cospi(x[1] * t)
+    Qt = pi * x[1] * cospi(x[1] * t)
+    # Manufactured forcing replaces physical curvature and friction.
+    return SVector(T(Qθ / A0), T(Qt + Q * Qθ / A0^2), T(Qt + 2 * Q * Qθ / A0^2), 0, 0)
 end

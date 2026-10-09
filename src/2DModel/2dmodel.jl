@@ -14,12 +14,15 @@ The governing equations account for conservation of mass and momentum, incorpora
 ```math
 \left\{\begin{aligned}
     \frac{\partial a}{\partial t} + \frac{\partial}{\partial \theta}\left( \frac{Q_{R\theta}}{A} \right) + \frac{\partial}{\partial s}(Q_s) &= 0 \\
-    \frac{\partial Q_{R\theta}}{\partial t} + \frac{\partial}{\partial \theta}\left(\frac{Q_{R\theta}^2}{2A^2} + A P(a)\right) + \frac{\partial}{\partial s}\left( \frac{Q_{R\theta}Q_s}{A} \right) &= P(a) \frac{\partial A}{\partial \theta} - 2 R k \frac{Q_{R\theta}}{A} + \frac{2R}{3} \mathcal{C}\sin \theta \frac{Q_s^2}{A} \\
-    \frac{\partial Q_{s}}{\partial t} + \frac{\partial}{\partial \theta}\left(\frac{Q_{R\theta} Q_s}{A^2} \right) + \frac{\partial}{\partial s}\left( \frac{Q_s^2}{A} - \frac{Q_{R\theta}^2}{2A^2} + A P(a) \right) &= P(a) \frac{\partial A}{\partial s} - R k \frac{Q_s}{A} - \frac{2R}{3} \mathcal{C}\sin \theta \frac{Q_s Q_{R\theta}}{A^2} \\
-    P(a) &= P_{ext} + \frac{Eh}{\sqrt{2}\left(1-\xi^2\right)}\frac{\sqrt{A} - \sqrt{A_0}}{A_0} \\
+    \frac{\partial Q_{R\theta}}{\partial t} + \frac{\partial}{\partial \theta}\left(\frac{Q_{R\theta}^2}{2A^2} + A p(a)\right) + \frac{\partial}{\partial s}\left( \frac{Q_{R\theta}Q_s}{A} \right) &= p(a) \frac{\partial A}{\partial \theta} + 2 R k \frac{Q_{R\theta}}{A} + \frac{2R}{3} \mathcal{C}\sin \theta \frac{Q_s^2}{A} \\
+    \frac{\partial Q_{s}}{\partial t} + \frac{\partial}{\partial \theta}\left(\frac{Q_{R\theta} Q_s}{A^2} \right) + \frac{\partial}{\partial s}\left( \frac{Q_s^2}{A} - \frac{Q_{R\theta}^2}{2A^2} + A p(a) \right) &= p(a) \frac{\partial A}{\partial s} + R k \frac{Q_s}{A} - \frac{2R}{3} \mathcal{C}\sin \theta \frac{Q_s Q_{R\theta}}{A^2} \\
+    p(a) &= \frac{P(a)}{\rho} = \frac{Eh}{\rho\sqrt{2}\left(1-\xi^2\right)}\frac{\sqrt{A} - \sqrt{A_0}}{A_0} \\
     R &= \sqrt{2A}
 \end{aligned}\right.
 ```
+
+`pressure` returns physical transmural pressure `P`; `p = P/rho` is the
+specific pressure used in the paper. The Navier coefficient `k` is non-positive.
 
 """
 struct BloodFlowEquations2D{T<:Real} <: AbstractBloodFlowEquations{2,5}
@@ -48,9 +51,8 @@ Computes the flux vector for the conservation laws of the 2D blood flow model in
 Flux vector as an `SVector`.
 """
 function Trixi.flux(u, orientation::Integer, eq::BloodFlowEquations2D)
-    P = pressure(u, eq) # Compute pressure from state vector
+    P = pressure(u, eq) / eq.rho # Specific pressure in the momentum flux
     a, QRθ, Qs, E, A0 = u
-    QRθ = 0.0
     A = a + A0 # Total cross-sectional area
     if orientation == 1 # Flux in θ-direction
         f1 = QRθ / A
@@ -77,7 +79,7 @@ Computes the flux vector for the conservation laws of the 2D blood flow model ba
 Flux vector as an `SVector`.
 """
 function Trixi.flux(u, normal, eq::BloodFlowEquations2D)
-    P = pressure(u, eq) # Compute pressure from state vector
+    P = pressure(u, eq) / eq.rho # Specific pressure in the momentum flux
     a, QRθ, Qs, E, A0 = u
     A = a + A0 # Total cross-sectional area
     # if normal == 1 # Flux in θ-direction
@@ -111,7 +113,7 @@ function flux_nonconservative(u_ll, u_rr, orientation::Integer, eq::BloodFlowEqu
     T = eltype(u_ll)
     p_ll = pressure(u_ll, eq)
     p_rr = pressure(u_rr, eq)
-    pmean = (p_ll + p_rr) / 2 # Compute average pressure
+    pmean = (p_ll + p_rr) / (2 * eq.rho) # Average specific pressure
     a_ll, _, _, _, A0_ll = u_ll
     a_rr, _, _, _, A0_rr = u_rr
     A_ll = a_ll + A0_ll
@@ -142,7 +144,7 @@ function flux_nonconservative(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
     T = eltype(u_ll)
     p_ll = pressure(u_ll, eq)
     p_rr = pressure(u_rr, eq)
-    pmean = (p_ll + p_rr) / 2 # Compute average pressure
+    pmean = (p_ll + p_rr) / (2 * eq.rho) # Average specific pressure
     a_ll, _, _, _, A0_ll = u_ll
     a_rr, _, _, _, A0_rr = u_rr
     A_ll = a_ll + A0_ll
@@ -177,8 +179,8 @@ function Trixi.max_abs_speed_naive(
     a_rr, QRθ_rr, Qs_rr, _, A0_rr = u_rr
     A_ll = a_ll + A0_ll
     A_rr = a_rr + A0_rr
-    pp_ll = pressure_der(u_ll, eq)
-    pp_rr = pressure_der(u_rr, eq)
+    pp_ll = pressure_der(u_ll, eq) / eq.rho
+    pp_rr = pressure_der(u_rr, eq) / eq.rho
     if orientation == 1
         return max(
             max(abs(QRθ_ll)/A_ll^2, abs(QRθ_rr)/A_rr^2), max(sqrt(pp_ll), sqrt(pp_rr))
@@ -205,20 +207,10 @@ Maximum absolute speed.
 
 """
 function Trixi.max_abs_speed_naive(u_ll, u_rr, normal, eq::BloodFlowEquations2D)
-    a_ll, QRθ_ll, Qs_ll, _, A0_ll = u_ll
-    a_rr, QRθ_rr, Qs_rr, _, A0_rr = u_rr
-    A_ll = a_ll + A0_ll
-    A_rr = a_rr + A0_rr
-    pp_ll = pressure_der(u_ll, eq)
-    pp_rr = pressure_der(u_rr, eq)
-    ws_ll = Qs_ll / A_ll
-    ws_rr = Qs_rr / A_rr
-    return max(
-        abs(ws_ll*normal[2] + sqrt(A_ll*pp_ll)*sqrt(normal[1]^2/A_ll + normal[2]^2)),
-        abs(ws_rr*normal[2] + sqrt(A_rr*pp_rr)*sqrt(normal[1]^2/A_rr + normal[2]^2)),
-        abs(ws_ll*normal[2] + QRθ_ll/A_ll^2*normal[1]),
-        abs(ws_rr*normal[2] + QRθ_rr/A_rr^2*normal[1]),
-    )
+    # Bound both acoustic waves, including for negative/scaled mesh normals.
+    speed_theta = max_abs_speed_naive(u_ll, u_rr, 1, eq)
+    speed_s = max_abs_speed_naive(u_ll, u_rr, 2, eq)
+    return abs(normal[1]) * speed_theta + abs(normal[2]) * speed_s
 end
 
 @doc raw"""
@@ -237,7 +229,7 @@ Tuple containing the maximum absolute speeds in the \( \theta \)- and \( s \)-di
 function Trixi.max_abs_speeds(u, eq::BloodFlowEquations2D)
     a, QRθ, Qs, E, A0 = u
     A = a+A0
-    pp = pressure_der(u, eq)
+    pp = pressure_der(u, eq) / eq.rho
     return max(abs(QRθ/A^2), sqrt(pp)), abs(Qs/A) + sqrt(A*pp)
 end
 
